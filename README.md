@@ -4,7 +4,7 @@
 
 ```lisp
 YAML> (yaml:parse #p"network/hosts.yaml")
-{"name" => "Your New Jekyll Site", "markdown" => "redcarpet", "pygments" => "true"}
+{"prod" => ("something.herokuapp.com" 6767), "db" => ("somewhere.iamnotcreative.org" 5432)}
 YAML> (yaml:parse "{arch: x86-64, cc: clang, user: eudoxia}")
 {"arch" => "x86-64", "cc" => "clang", "user" => "eudoxia"}
 ```
