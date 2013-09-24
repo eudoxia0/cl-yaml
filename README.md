@@ -3,11 +3,14 @@
 # Usage
 
 ```lisp
-YAML> (yaml:parse #p"network/hosts.yaml")
+CL-YAML> (yaml:parse #p"network/hosts.yaml")
 {"prod" => ("something.herokuapp.com" 6767), "db" => ("somewhere.org" 5432)}
-YAML> (yaml:parse "{arch: x86-64, cc: clang, user: eudoxia}")
+CL-YAML> (yaml:parse "{arch: x86-64, cc: clang, user: eudoxia}")
 {"arch" => "x86-64", "cc" => "clang", "user" => "eudoxia"}
-
+CL-USER> (yaml:emit (list "foo" "bar"))
+"[\"foo\", \"bar\"]"
+CL-USER> (yaml:emit '((a 1) (b 2) (c 3)))
+"[[A, 1], [B, 2], [C, 3]]"
 ```
 
 [Hash table syntax](http://frank.kank.net/essays/hash.html) is used in the examples. I recommend at least using its hash table printer because the default is basically useless.
