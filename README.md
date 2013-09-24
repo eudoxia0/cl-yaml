@@ -4,9 +4,10 @@
 
 ```lisp
 YAML> (yaml:parse #p"network/hosts.yaml")
-{"prod" => ("something.herokuapp.com" 6767), "db" => ("somewhere.iamnotcreative.org" 5432)}
+{"prod" => ("something.herokuapp.com" 6767), "db" => ("somewhere.org" 5432)}
 YAML> (yaml:parse "{arch: x86-64, cc: clang, user: eudoxia}")
 {"arch" => "x86-64", "cc" => "clang", "user" => "eudoxia"}
+
 ```
 
 [Hash table syntax](http://frank.kank.net/essays/hash.html) is used in the examples. I recommend at least using its hash table printer because the default is basically useless.

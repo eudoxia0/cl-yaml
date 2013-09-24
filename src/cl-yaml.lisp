@@ -176,4 +176,16 @@
       (error "Unknown input to yaml:load."))))
 
 (defun emit (obj)
-  "")
+  (typecase obj
+    (number
+      (princ-to-string obj))
+    (string
+      (format nil "~S" obj))
+    (symbol
+      (format nil "~A" obj))
+    (list
+      (format nil "[~{~A~#[~:;, ~]~}]" (mapcar #'emit obj)))
+    (hash-table
+     (format nil "{~{~A~#[~:;, ~]~}}"
+	     (loop for key being the hash-keys of obj collecting
+		  (format nil "~A : ~A" key (gethash key obj)))))))
