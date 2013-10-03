@@ -1,15 +1,8 @@
-(defpackage cl-yaml-test
+(defpackage yaml-test
   (:use :cl
         :fiveam
-        :cffi
-        :yaml))
-(in-package :cl-yaml-test)
-
-(def-suite basic
-  :description "firing up a parser, setting input to something, etc.")
-
-(test (string-input nil basic)
-  (is (yaml::with-string-input "derp" 4)))
+        :cffi))
+(in-package :yaml-test)
 
 (def-suite list
   :description "Parsing lists")
