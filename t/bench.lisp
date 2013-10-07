@@ -11,6 +11,13 @@
   (time (yaml:parse str))
   (terpri))
 
+(defun benchmark-len (n)
+  (benchmark (generate-list (make-gen) n)))
+
 (defun run-benchmarks ()
-  (loop for i from 1 to 256 do
-       (benchmark (generate-list (make-gen) (* 256 i)))))
+  (let ((gen (make-gen)))
+    (loop for i from 1 to 256 do
+	 (benchmark (generate-list (* 64 i))))))
+
+(export 'benchmark-len)
+(export 'run-benchmarks)
