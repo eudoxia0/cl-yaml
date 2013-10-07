@@ -76,6 +76,7 @@
     documents))
 
 (defstruct (token (:print-function (lambda (tok stream k)
+				     (declare (ignore k))
 				     (format stream "~S" (token-value tok)))))
   (anchor :string)
   (value (or :string :fixnum)))
