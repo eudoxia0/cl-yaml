@@ -1,4 +1,4 @@
-(in-package :cl-yaml-test)
+(in-package :yaml-test)
 
 (defun make-gen ()
   (lambda () (random 99)))

@@ -5,5 +5,6 @@
                :fiveam)
   :components ((:module "t"
                 :components
-                ((:file "cl-yaml"))))
+                ((:file "cl-yaml")
+		 (:file "bench"))))
   :perform (load-op :after (op c) (asdf:clear-system c)))
