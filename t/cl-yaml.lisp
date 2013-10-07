@@ -22,8 +22,8 @@
   :description "Parsing maps")
 
 (test (flat-map nil map)
-  (is (equal (yaml:parse "{a : 1, b : 2, c : 3}")
-	     (let ((hash (make-hash-table :test #'equalp)))
+  (is (equalp (yaml:parse "{a : 1, b : 2, c : 3}")
+	     (let ((hash (make-hash-table :test #'equal)))
 	       (setf (gethash "a" hash) 1
 		     (gethash "b" hash) 2
 		     (gethash "c" hash) 3)
