@@ -41,10 +41,3 @@ void destroyDocumentList(DocumentList docs);
 /* Tokenization */
 
 DocumentList tokenize(const char* str, size_t len);
-
-struct Form {
-  const char* value;
-  struct Form* car;
-  struct Form* cdr;
-  const char* err;
-};

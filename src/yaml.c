@@ -84,6 +84,10 @@ DocumentList tokenize(const char* str, size_t len) {
     case YAML_ALIAS_EVENT:
       tok.value = (const char*)event.data.alias.anchor;
       break;
+    case YAML_DOCUMENT_START_EVENT:
+      /* Add a new document to the list */
+      appendDocument(docs,createTokenList());
+      break;
     default:
       /* The token only carries type information */
       break;
