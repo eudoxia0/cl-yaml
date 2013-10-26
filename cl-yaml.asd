@@ -33,7 +33,11 @@
                                         (merge-pathnames
                                          "src"
                                          (component-pathname c)))
-                         (namestring (car (output-files o c)))))))
+                         (make-pathname :name "yaml_wrapper"
+                                        :type "so"
+                                        :directory '(:relative :up)
+                                        :defaults
+                                        (component-pathname c))))))
       (error 'operation-error :component c :operation o)
       t))
 
