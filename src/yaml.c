@@ -1,124 +1,54 @@
 #include "yaml.h"
 
-/* TokenList */
+/* Accessors */
 
-TokenList createTokenList(void) {
-  TokenList list;
-  list.data = (Token*)malloc(sizeof(Token)*LIST_CHUNK_SIZE);
-  list.len = 0;
-  list.cap = LIST_CHUNK_SIZE;
-  return list;
-}
-
-void appendToken(TokenList* list, Token tok) {
-  if((list->len + 1) == list->cap) {
-    list->cap += LIST_CHUNK_SIZE;
-    list->data = (Token*)realloc(list->data,list->cap);
+yaml_parser_t* make_parser(const char* str, size_t len) {
+  yaml_parser_t* parser = (yaml_parser_t*)malloc(sizeof(yaml_parser_t));
+  if(yaml_parser_initialize(parser)) {
+    yaml_parser_set_input_string(parser,(const unsigned char*)str, len);
+    return parser;
   }
-  list->data[list->len] = tok;
-  list->len++;
+  else
+    return NULL;
 }
 
-void destroyTokenList(TokenList list) {
-  free(list.data);
+void delete_parser(yaml_parser_t* parser) {
+  yaml_parser_delete(parser);
 }
 
-/* DocumentList */
-
-DocumentList createDocumentList(void) {
-  DocumentList docs;
-  docs.data = (TokenList*)malloc(sizeof(TokenList)*LIST_CHUNK_SIZE);
-  docs.len = 0;
-  docs.cap = LIST_CHUNK_SIZE;
-  return docs;
+yaml_event_t* make_event() {
+  return (yaml_event_t*)malloc(sizeof(yaml_event_t));
 }
 
-DocumentList tok_err(const char* msg) {
-  /* Signals a tokenization error */
-  DocumentList docs;
-  docs.err = msg;
-  return docs;
+void delete_event(yaml_event_t* event) {
+  yaml_event_delete(event);
 }
 
-void appendDocument(DocumentList* docs, TokenList list) {
-  if((docs->len + 1) == docs->cap) {
-    docs->cap += LIST_CHUNK_SIZE;
-    docs->data = (TokenList*)realloc(docs->data,docs->cap);
-  }
-  docs->data[docs->len] = list;
-  docs->len++;
+int parse_event(yaml_parser_t* parser, yaml_event_t* event) {
+  return yaml_parser_parse(parser, event);
 }
 
-void destroyDocumentList(DocumentList docs) {
-  size_t i = 0;
-  for(; i < docs.len; i++)
-    destroyTokenList(docs.data[i]);
+int event_type(yaml_event_t* event) {
+  return event->type;
 }
 
-/* Tokenization */
-
-DocumentList* tokenize(const char* str, size_t len) {
-  /* Initialization */
-  yaml_parser_t parser;
-  yaml_event_t  event;
-  DocumentList* docs = malloc(sizeof(DocumentList));
-  *docs = createDocumentList();
-
-  if(str == NULL) {
-    *docs = tok_err("Can't parse a null string.");
-    return docs;
-  }
-  if(len == 0) {
-    *docs = tok_err("Can't parse a string with length zero.");
-    return docs;
-  }
-  if(!yaml_parser_initialize(&parser)) {
-    *docs = tok_err("Could not initialize parser.");
-    return docs;
-  }
-  appendDocument(docs, createTokenList());
-  yaml_parser_set_input_string(&parser, (const unsigned char*)str, len);
-
-  while(event.type != YAML_STREAM_END_EVENT) {
-    Token tok;
-    if(!yaml_parser_parse(&parser, &event)) {
-      *docs = tok_err("Parsing error"/*parser.error*/);
-      return docs;
-    }
-    tok.type = event.type;
-    switch(event.type) {
-    case YAML_SCALAR_EVENT:
-      tok.value = (const char*)event.data.scalar.value;
-      tok.anchor = (const char*)event.data.scalar.anchor;
-      break;
-    case YAML_ALIAS_EVENT:
-      tok.value = (const char*)event.data.alias.anchor;
-      break;
-    case YAML_DOCUMENT_START_EVENT:
-      /* Add a new document to the list */
-      appendDocument(docs,createTokenList());
-      break;
-    default:
-      /* The token only carries type information */
-      break;
-    }
-    appendToken(&docs->data[docs->len-1],tok);
-    if(event.type != YAML_STREAM_END_EVENT)
-      yaml_event_delete(&event);
-  }
-  yaml_event_delete(&event);
-  
-  /* Finalize */
-  yaml_parser_delete(&parser);
-
-  return docs;
+const char* event_value(yaml_event_t* event) {
+  return (const char*)event->data.scalar.value;
 }
 
-size_t get_len(DocumentList* docs) { return docs->len; }
-TokenList* get_nth_doc(DocumentList* docs, size_t n) { return &docs->data[n]; }
+const char* event_anchor(yaml_event_t* event) {
+  return (const char*)event->data.scalar.anchor;
+}
 
-Token* get_nth_tok(TokenList* list, size_t n) { return &list->data[n]; }
+/* Enum values */
 
-int get_type(Token* tok) { return tok->type; }
-const char* get_anchor(Token* tok) { return tok->anchor; }
-const char* get_value(Token* tok) { return tok->value; }
+int enum_scalar() { return YAML_SCALAR_EVENT; }
+int enum_alias() { return YAML_ALIAS_EVENT; }
+int enum_seq_start() { return YAML_SEQUENCE_START_EVENT; }
+int enum_seq_end() { return YAML_SEQUENCE_END_EVENT; } 
+int enum_map_start() { return YAML_MAPPING_START_EVENT; }
+int enum_map_end() { return YAML_MAPPING_END_EVENT; }
+int enum_doc_start() { return YAML_DOCUMENT_START_EVENT; }
+int enum_doc_end() { return YAML_DOCUMENT_END_EVENT; }
+int enum_stream_start() { return YAML_STREAM_START_EVENT; }
+int enum_stream_end() { return YAML_STREAM_END_EVENT; }
