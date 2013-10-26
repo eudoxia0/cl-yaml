@@ -40,4 +40,15 @@ void destroyDocumentList(DocumentList docs);
 
 /* Tokenization */
 
-DocumentList tokenize(const char* str, size_t len);
+DocumentList* tokenize(const char* str, size_t len);
+
+/* Accessors */
+
+size_t get_len(DocumentList* docs);
+TokenList* get_nth_doc(DocumentList* docs, size_t n);
+
+Token* get_nth_tok(TokenList* list, size_t n);
+
+int get_type(Token* tok);
+const char* get_anchor(Token* tok);
+const char* get_value(Token* tok);

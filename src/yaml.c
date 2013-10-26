@@ -57,25 +57,33 @@ void destroyDocumentList(DocumentList docs) {
 
 /* Tokenization */
 
-DocumentList tokenize(const char* str, size_t len) {
+DocumentList* tokenize(const char* str, size_t len) {
   /* Initialization */
   yaml_parser_t parser;
   yaml_event_t  event;
-  DocumentList docs = createDocumentList();
+  DocumentList* docs = malloc(sizeof(DocumentList));
+  *docs = createDocumentList();
 
-  if(str == NULL)
-    return tok_err("Can't parse a null string.");
-  if(len == 0)
-    return tok_err("Can't parse a string with length zero.");
-  if(!yaml_parser_initialize(&parser))
-    return tok_err("Could not initialize parser.");
-  appendDocument(&docs, createTokenList());
+  if(str == NULL) {
+    *docs = tok_err("Can't parse a null string.");
+    return docs;
+  }
+  if(len == 0) {
+    *docs = tok_err("Can't parse a string with length zero.");
+    return docs;
+  }
+  if(!yaml_parser_initialize(&parser)) {
+    *docs = tok_err("Could not initialize parser.");
+    return docs;
+  }
+  appendDocument(docs, createTokenList());
   yaml_parser_set_input_string(&parser, (const unsigned char*)str, len);
 
   while(event.type != YAML_STREAM_END_EVENT) {
     Token tok;
     if(!yaml_parser_parse(&parser, &event)) {
-      return tok_err("Parsing error"/*parser.error*/);
+      *docs = tok_err("Parsing error"/*parser.error*/);
+      return docs;
     }
     tok.type = event.type;
     switch(event.type) {
@@ -88,13 +96,13 @@ DocumentList tokenize(const char* str, size_t len) {
       break;
     case YAML_DOCUMENT_START_EVENT:
       /* Add a new document to the list */
-      appendDocument(&docs,createTokenList());
+      appendDocument(docs,createTokenList());
       break;
     default:
       /* The token only carries type information */
       break;
     }
-    appendToken(&docs.data[docs.len-1],tok);
+    appendToken(&docs->data[docs->len-1],tok);
     if(event.type != YAML_STREAM_END_EVENT)
       yaml_event_delete(&event);
   }
@@ -105,3 +113,12 @@ DocumentList tokenize(const char* str, size_t len) {
 
   return docs;
 }
+
+size_t get_len(DocumentList* docs) { return docs->len; }
+TokenList* get_nth_doc(DocumentList* docs, size_t n) { return &docs->data[n]; }
+
+Token* get_nth_tok(TokenList* list, size_t n) { return &list->data[n]; }
+
+int get_type(Token* tok) { return tok->type; }
+const char* get_anchor(Token* tok) { return tok->anchor; }
+const char* get_value(Token* tok) { return tok->value; }
