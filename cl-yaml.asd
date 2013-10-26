@@ -16,13 +16,13 @@
 
 (defmethod perform ((o load-op) (c c->so)) t)
 
-(defparameter +c-flags+ "-Wall -Wextra -c -fPIC -O3 -ansi")
+(defparameter +c-flags+ "-Wall -Wextra -c -fPIC -O0 -ansi")
 (defparameter +linker-flags+ "-lyaml")
 
 (defun comp (file out)
-  (format t "clang ~A -o out.o ~A; clang out.o -shared -o ~A ~A"
+  (format t "cc ~A -o out.o ~A && cc out.o -shared -o ~A ~A && rm out.o"
           (namestring file) +c-flags+ (namestring out) +linker-flags+)
-  (format nil "clang ~A -o out.o ~A && clang out.o -shared -o ~A ~A && rm out.o"
+  (format nil "cc ~A -o out.o ~A && cc out.o -shared -o ~A ~A && rm out.o"
           (namestring file) +c-flags+ (namestring out) +linker-flags+))
 
 (defmethod perform ((o compile-op) (c c->so))
@@ -35,9 +35,10 @@
                                          (component-pathname c)))
                          (make-pathname :name "yaml_wrapper"
                                         :type "so"
-                                        :directory '(:relative :up)
                                         :defaults
-                                        (component-pathname c))))))
+                                        (merge-pathnames
+                                         (make-pathname :directory '(:relative :up))
+                                         (component-pathname c)))))))
       (error 'operation-error :component c :operation o)
       t))
 

@@ -21,7 +21,7 @@ typedef struct {
 } TokenList;
 
 TokenList createTokenList(void);
-void appendToken(TokenList list, Token tok);
+void appendToken(TokenList* list, Token tok);
 void destroyTokenList(TokenList list);
 
 /* DocumentList */
@@ -34,8 +34,8 @@ typedef struct {
 } DocumentList;
 
 DocumentList createDocumentList(void);
-DocumentList err(const char* msg);
-void appendDocument(DocumentList docs, TokenList list);
+DocumentList tok_err(const char* msg);
+void appendDocument(DocumentList* docs, TokenList list);
 void destroyDocumentList(DocumentList docs);
 
 /* Tokenization */

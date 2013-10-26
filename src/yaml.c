@@ -10,13 +10,13 @@ TokenList createTokenList(void) {
   return list;
 }
 
-void appendToken(TokenList list, Token tok) {
-  if((list.len + 1) == list.cap) {
-    list.cap += LIST_CHUNK_SIZE;
-    list.data = (Token*)realloc(list.data,list.cap);
+void appendToken(TokenList* list, Token tok) {
+  if((list->len + 1) == list->cap) {
+    list->cap += LIST_CHUNK_SIZE;
+    list->data = (Token*)realloc(list->data,list->cap);
   }
-  list.len++;
-  list.data[list.len] = tok;
+  list->data[list->len] = tok;
+  list->len++;
 }
 
 void destroyTokenList(TokenList list) {
@@ -33,20 +33,20 @@ DocumentList createDocumentList(void) {
   return docs;
 }
 
-DocumentList err(const char* msg) {
+DocumentList tok_err(const char* msg) {
   /* Signals a tokenization error */
   DocumentList docs;
   docs.err = msg;
   return docs;
 }
 
-void appendDocument(DocumentList docs, TokenList list) {
-  if((docs.len + 1) == docs.cap) {
-    docs.cap += LIST_CHUNK_SIZE;
-    docs.data = (TokenList*)realloc(docs.data,docs.cap);
+void appendDocument(DocumentList* docs, TokenList list) {
+  if((docs->len + 1) == docs->cap) {
+    docs->cap += LIST_CHUNK_SIZE;
+    docs->data = (TokenList*)realloc(docs->data,docs->cap);
   }
-  docs.len++;
-  docs.data[docs.len] = list;
+  docs->data[docs->len] = list;
+  docs->len++;
 }
 
 void destroyDocumentList(DocumentList docs) {
@@ -63,17 +63,19 @@ DocumentList tokenize(const char* str, size_t len) {
   yaml_event_t  event;
   DocumentList docs = createDocumentList();
 
-  if(!yaml_parser_initialize(&parser))
-    return err("Could not initialize parser.");
   if(str == NULL)
-    return err("Can't parse a null string.");
-  docs.data[0] = createTokenList();
+    return tok_err("Can't parse a null string.");
+  if(len == 0)
+    return tok_err("Can't parse a string with length zero.");
+  if(!yaml_parser_initialize(&parser))
+    return tok_err("Could not initialize parser.");
+  appendDocument(&docs, createTokenList());
   yaml_parser_set_input_string(&parser, (const unsigned char*)str, len);
 
   while(event.type != YAML_STREAM_END_EVENT) {
     Token tok;
     if(!yaml_parser_parse(&parser, &event)) {
-      return err("Parsing error"/*parser.error*/);
+      return tok_err("Parsing error"/*parser.error*/);
     }
     tok.type = event.type;
     switch(event.type) {
@@ -86,15 +88,15 @@ DocumentList tokenize(const char* str, size_t len) {
       break;
     case YAML_DOCUMENT_START_EVENT:
       /* Add a new document to the list */
-      appendDocument(docs,createTokenList());
+      appendDocument(&docs,createTokenList());
       break;
     default:
       /* The token only carries type information */
       break;
     }
+    appendToken(&docs.data[docs.len-1],tok);
     if(event.type != YAML_STREAM_END_EVENT)
       yaml_event_delete(&event);
-    appendToken(docs.data[docs.len-1],tok);
   }
   yaml_event_delete(&event);
   
