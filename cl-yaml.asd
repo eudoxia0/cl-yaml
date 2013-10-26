@@ -58,7 +58,8 @@
                 :components
                 ((:static-file "yaml.h")
                  (c->so "yaml" :depends-on ("yaml.h"))
-                 (:file "ffi")))
+                 (:file "ffi")
+                 (:file "cl-yaml")))
                (:module "spec"))
   :description ""
   :long-description
