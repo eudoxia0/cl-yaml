@@ -12,7 +12,10 @@
     (list
       (make-pathname :name "yaml_wrapper"
                      :type #+unix "so" #+darwin "dylib" #+windows "dll"
-                     :defaults (component-pathname f))) t))
+                     :defaults
+                     (merge-pathnames
+                      (make-pathname :directory '(:relative :up))
+                      (component-pathname f)))) t))
 
 (defmethod perform ((o load-op) (c c->so)) t)
 
