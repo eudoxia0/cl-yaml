@@ -37,6 +37,7 @@
                                      (tok-value tok)
                                      (tok-anchor tok))
                                tokens))))
+          (destroy-token-list tok-list)
           (group-documents (clean tokens))))))
 
 (defmacro with-preserved-case (&rest code)

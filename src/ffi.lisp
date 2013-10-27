@@ -7,6 +7,7 @@
            :tok-type
            :tok-value
            :tok-anchor
+           :destroy-token-list
            :+enum+
            :+scalar+
            :+alias+
@@ -37,6 +38,8 @@
 (defcfun ("tok_type" tok-type) :int (tok :pointer))
 (defcfun ("tok_value" tok-value) :string (tok :pointer))
 (defcfun ("tok_anchor" tok-anchor) :string (tok :pointer))
+
+(defcfun ("destroyTokenList" destroy-token-list) :void (list :pointer))
 
 ;; Enum values
 
