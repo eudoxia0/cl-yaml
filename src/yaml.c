@@ -46,7 +46,7 @@ TokenList* tokenize(const char* str, size_t len) {
   }
   yaml_parser_set_input_string(&parser, (const unsigned char*)str, len);
 
-  while(event.type != YAML_STREAM_END_EVENT) {
+  do {
     Token tok;
     size_t value_len = 0;
     size_t anchor_len = 0;
@@ -82,7 +82,7 @@ TokenList* tokenize(const char* str, size_t len) {
     appendToken(tokens,tok);
     if(event.type != YAML_STREAM_END_EVENT)
       yaml_event_delete(&event);
-  }
+  } while(event.type != YAML_STREAM_END_EVENT);
   yaml_event_delete(&event);
   
   /* Finalize */

@@ -15,15 +15,23 @@
            (eq (first tok) :stream-end)))
    tokens))
 
+(defparameter *delimiters*
+  (list :seq-start :seq-end :map-start :map-end
+        :stream-start :stream-end :doc-start :doc-end))
+
 (defun group-documents (tokens)
-  (remove-if #'(lambda (seq) (eql (length seq) 0))
+  (remove-if #'(lambda (seq)
+                 (or (eql (length seq) 0)
+                     (and (eql (length seq) 1)
+                          (member (first (elt seq 0))
+                                  *delimiters*))))
              (split-sequence-if
               #'(lambda (tok)
                   (or (eq (first tok) :doc-start)
                       (eq (first tok) :doc-end)))
               tokens)))
 
-(defun process (str len)
+(defun process (str &optional (len (length str)))
   (let ((tok-list (tokenize str len))
         (tokens (make-array 64 :fill-pointer 0)))
     (if (list-err tok-list)
@@ -95,7 +103,7 @@
         
 (defun post-process (documents)
   (if (cdr documents)
-      (mapcar #'(lambda (doc) (append (list :doc) doc)) documents)
+      (mapcar #'(lambda (doc) (list :doc doc)) documents)
       (car documents)))
 
 (defun slurp-stream (stream)
