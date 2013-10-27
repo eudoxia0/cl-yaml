@@ -1,13 +1,12 @@
 (defpackage :libyaml
   (:use :cl :cffi)
-  (:export :make-parser
-           :delete-parser
-           :make-event
-           :delete-event
-           :parse-event
-           :event-type
-           :event-value
-           :event-anchor
+  (:export :tokenize
+           :list-len
+           :list-err
+           :nth-tok
+           :tok-type
+           :tok-value
+           :tok-anchor
            :+enum+
            :+scalar+
            :+alias+
@@ -28,19 +27,16 @@
                    :defaults (asdf::component-relative-pathname
                                (asdf:find-system :cl-yaml)))))
 
+(defcfun ("tokenize" tokenize) :pointer (str :string) (len :int))
+
 ;; Accessors
 
-(defcfun ("make_parser" make-parser) :pointer (str :string) (len :int))
-(defcfun ("delete_parser" delete-parser) :void (parser :pointer))
-
-(defcfun ("make_event" make-event) :pointer)
-(defcfun ("delete_event" delete-event) :void (event :pointer))
-
-(defcfun ("parse_event" parse-event) :int (parser :pointer) (event :pointer))
-
-(defcfun ("event_type" event-type) :int (event :pointer))
-(defcfun ("event_value" event-value) :string (event :pointer))
-(defcfun ("event_anchor" event-anchor) :string (event :pointer))
+(defcfun ("list_len" list-len) :int (list :pointer))
+(defcfun ("nth_tok" nth-tok) :pointer (list :pointer) (n :int))
+(defcfun ("list_err" list-err) :string (list :pointer))
+(defcfun ("tok_type" tok-type) :int (tok :pointer))
+(defcfun ("tok_value" tok-value) :string (tok :pointer))
+(defcfun ("tok_anchor" tok-anchor) :string (tok :pointer))
 
 ;; Enum values
 
