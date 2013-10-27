@@ -4,6 +4,7 @@
   :depends-on (:cl-yaml
                :fiveam)
   :components ((:module "t"
+                :serial t
                 :components
                 ((:file "cl-yaml")
 		 (:file "bench"))))
