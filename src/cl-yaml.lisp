@@ -7,70 +7,37 @@
            :emit))
 (in-package :yaml)
 
-(defmacro with-parser ((str len) &rest body)
-  `(let ((parser (make-parser ,str ,len))
-         (event (make-event)))
-    (unwind-protect
-         (progn ,@body)
-      (delete-parser parser))))
-
-(defstruct (token (:print-function (lambda (tok stream k)
-				     (declare (ignore k))
-				     (format stream "~S" (token-value tok)))))
-  type
-  (anchor :string)
-  (value (or :string :fixnum)))
-
-(defun tokenize (str &optional (len (length str)))
-  (with-parser (str len)
-    (loop while (not (eq (event-type event) +stream-end+))
-          collecting
-          (let ((res (parse-event parser event)))
-            (if (not (eql res 1))
-                (error "Parse error: ~A" res)
-                (let ((type (gethash (event-type event) +enum+)))
-                  (prog1
-                      (cond
-                        ((eq type +scalar+)
-                         (make-token
-                          :type +scalar+
-                          :value (event-value event)
-                          :anchor (event-anchor event)))
-                        ((eq type +alias+)
-                         (make-token
-                          :type +alias+
-                          :value (event-anchor event)
-                          :anchor nil))
-                        (t
-                         (make-token
-                          :type type
-                          :anchor nil)))
-                    (when (not (eq type +stream-end+))
-                      (delete-event event))))))
-            into tokens
-          finally (progn
-                    (delete-event event)
-                    (return (clean (group-documents tokens)))))))
-
-(defun group-documents (tokens)
-  (split-sequence-if
-    #'(lambda (elem)
-      (or (eq (token-value elem) +doc-start+)
-          (eq (token-value elem) +doc-end+)))
-    tokens))
-
-(defun clean (documents)
+(defun clean (tokens)
   "I am not a clever man."
   (remove-if
-    #'(lambda (doc)
-        (or (null doc)
-	    (if (and (listp doc) (null (cdr doc)) (typep (car doc) 'token))
-		(let ((tok (token-type (car doc))))
-		  (or (null tok)
-		      (equal tok +stream-start+)
-		      (equal tok +stream-end+)))
-		nil)))
-    documents))
+   #'(lambda (tok)
+       (or (eq (first tok) :stream-start)
+           (eq (first tok) :stream-end)))
+   tokens))
+
+(defun group-documents (tokens)
+  (remove-if #'(lambda (seq) (eql (length seq) 0))
+             (split-sequence-if
+              #'(lambda (tok)
+                  (or (eq (first tok) :doc-start)
+                      (eq (first tok) :doc-end)))
+              tokens)))
+
+(defun process (str len)
+  (let ((tok-list (tokenize str len))
+        (tokens (make-array 64 :fill-pointer 0)))
+    (if (list-err tok-list)
+        (error "Parsing error")
+        (progn
+          (loop for i from 0 to (list-len tok-list) do
+            (let* ((tok (nth-tok tok-list i))
+                   (type (gethash (tok-type tok) +enum+)))
+              (if type
+                  (vector-push (list type
+                                     (tok-value tok)
+                                     (tok-anchor tok))
+                               tokens))))
+          (group-documents (clean tokens))))))
 
 (defmacro with-preserved-case (&rest code)
   `(unwind-protect
@@ -95,31 +62,34 @@
   (loop for tokens in documents collecting
     (let ((contexts (list nil))
           (aliases  (make-hash-table :test #'equal)))
-      (loop for tok in tokens do
-        (let ((type (token-type tok))
-              (val (token-value tok)))
+      (loop for tok across tokens do
+        (let ((type   (first tok))
+              (val    (second tok))
+              (anchor (third tok)))
 	  (cond
-            ((if (token-anchor tok)
-                 (setf (first contexts)
-                       (append (first contexts)
-                               (list (gethash val (token-value tok)))))))
-	    ((eql type +seq-start+)
+	    ((eq type :seq-start)
 	     (push (list) contexts))
-	    ((eql type +seq-end+)
+	    ((eq type :seq-end)
 	     (let ((con (pop contexts)))
 	       (setf (first contexts) (append (first contexts) (list con)))))
-	    ((eql type +map-start+)
+	    ((eq type :map-start)
 	     (push (list) contexts))
-	    ((eql type +map-end+)
+	    ((eq type :map-end)
 	     (let ((con (pop contexts)))
-	       (setf (first contexts) (append (first contexts)
-					      (list (alexandria:plist-hash-table con :test #'equal))))))
-            ((eql type +alias+)
+	       (setf (first contexts)
+                     (append (first contexts)
+                             (list
+                              (alexandria:plist-hash-table con :test #'equal))))))
+            ((eq type :alias)
              (setf (gethash val aliases) (first contexts)))
+            (anchor
+             (setf (first contexts)
+                   (append (first contexts)
+                           (list (gethash val aliases)))))
 	    (t
 	     (setf (first contexts)
                    (append (first contexts)
-                           (list (extract-type (token-value tok)))))))))
+                           (list (extract-type val))))))))
              (caar contexts))))
         
 (defun post-process (documents)
@@ -135,14 +105,14 @@
 (defun parse (src)
   (typecase src
     (string
-     (post-process (parse% (tokenize src (length src)))))
+     (post-process (parse% (process src (length src)))))
     (pathname
      (let ((str (with-open-file
                     (stream src :direction :input :if-does-not-exist :error)
                   (slurp-stream stream))))
        (post-process
         (parse%
-         (tokenize str (length str))))))
+         (process str (length str))))))
     (t
       (error "Unknown input to yaml:load."))))
 
