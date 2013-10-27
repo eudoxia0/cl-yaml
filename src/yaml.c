@@ -1,43 +1,105 @@
 #include "yaml.h"
 
+TokenList* createTokenList(void) {
+  TokenList* list = (TokenList*)malloc(sizeof(TokenList));
+  list->data = (Token*)malloc(sizeof(Token)*LIST_CHUNK_SIZE);
+  list->len = 0;
+  list->cap = LIST_CHUNK_SIZE;
+  list->err = NULL;
+  return list;
+}
+
+void appendToken(TokenList* list, Token tok) {
+  if((list->len + 1) == list->cap) {
+    list->cap += LIST_CHUNK_SIZE;
+    list->data = (Token*)realloc(list->data,list->cap);
+  }
+  list->data[list->len] = tok;
+  list->len++;
+}
+
+void destroyTokenList(TokenList* list) {
+  free(list->data);
+}
+
+TokenList* tokenize(const char* str, size_t len) {
+  /* Initialization */
+  yaml_parser_t parser;
+  yaml_event_t  event;
+  TokenList* tokens = createTokenList();
+
+  if(str == NULL) {
+    tokens->err = "Can't parse a null string.";
+    return tokens;
+  }
+  if(len == 0) {
+    tokens->err = "Can't parse a string with length zero.";
+    return tokens;
+  }
+  if(!yaml_parser_initialize(&parser)) {
+    tokens->err = "Could not initialize parser.";
+    return tokens;
+  }
+  yaml_parser_set_input_string(&parser, (const unsigned char*)str, len);
+
+  while(event.type != YAML_STREAM_END_EVENT) {
+    Token tok;
+    tok.value = NULL;
+    tok.anchor = NULL;
+    if(!yaml_parser_parse(&parser, &event)) {
+      tokens->err = "Parsing error";
+      return tokens;
+    }
+    tok.type = event.type;
+    switch(event.type) {
+    case YAML_SCALAR_EVENT:
+      tok.value = (const char*)event.data.scalar.value;
+      tok.anchor = (const char*)event.data.scalar.anchor;
+      break;
+    case YAML_ALIAS_EVENT:
+      tok.value = (const char*)event.data.alias.anchor;
+      break;
+    default:
+      /* The token only carries type information */
+      break;
+    }
+    appendToken(tokens,tok);
+    if(event.type != YAML_STREAM_END_EVENT)
+      yaml_event_delete(&event);
+  }
+  yaml_event_delete(&event);
+  
+  /* Finalize */
+  yaml_parser_delete(&parser);
+
+  return tokens;
+}
+
+
 /* Accessors */
 
-yaml_parser_t* make_parser(const char* str, size_t len) {
-  yaml_parser_t* parser = (yaml_parser_t*)malloc(sizeof(yaml_parser_t));
-  if(yaml_parser_initialize(parser)) {
-    yaml_parser_set_input_string(parser,(const unsigned char*)str, len);
-    return parser;
-  }
-  else
-    return NULL;
+size_t list_len(TokenList* list) {
+  return list->len;
 }
 
-void delete_parser(yaml_parser_t* parser) {
-  yaml_parser_delete(parser);
+Token* nth_tok(TokenList* list, size_t n) {
+  return &list->data[n];
 }
 
-yaml_event_t* make_event() {
-  return (yaml_event_t*)malloc(sizeof(yaml_event_t));
+const char* list_err(TokenList* list) {
+  return list->err;
 }
 
-void delete_event(yaml_event_t* event) {
-  yaml_event_delete(event);
+int tok_type(Token* tok) {
+  return tok->type;
 }
 
-int parse_event(yaml_parser_t* parser, yaml_event_t* event) {
-  return yaml_parser_parse(parser, event);
+const char* tok_value(Token* tok) {
+  return tok->value;
 }
 
-int event_type(yaml_event_t* event) {
-  return event->type;
-}
-
-const char* event_value(yaml_event_t* event) {
-  return (const char*)event->data.scalar.value;
-}
-
-const char* event_anchor(yaml_event_t* event) {
-  return (const char*)event->data.scalar.anchor;
+const char* tok_anchor(Token* tok) {
+  return tok->anchor;
 }
 
 /* Enum values */

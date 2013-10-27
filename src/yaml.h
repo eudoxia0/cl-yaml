@@ -1,18 +1,40 @@
+#include <stdlib.h>
 #include <yaml.h>
+#define LIST_CHUNK_SIZE 64
+
+typedef struct {
+  const char* anchor;
+  const char* value;
+  int type;
+} Token;
+
+/* To prevent frequent reallocations, lists initially
+  allocates space for 64 objects, and adds another 64
+  every time the list needs more space */
+
+/* TokenList */
+
+typedef struct {
+  Token* data;
+  size_t len;
+  size_t cap;
+  const char* err;
+} TokenList;
+
+TokenList* createTokenList(void);
+void appendToken(TokenList* list, Token tok);
+void destroyTokenList(TokenList* list);
+TokenList* tokenize(const char* str, size_t len);
+
 
 /* Accessors */
 
-yaml_parser_t* make_parser(const char* str, size_t len);
-void delete_parser(yaml_parser_t* parser);
-
-yaml_event_t* make_event();
-void delete_event(yaml_event_t* event);
-
-int parse_event(yaml_parser_t* parser, yaml_event_t* event);
-
-int event_type(yaml_event_t* event);
-const char* event_value(yaml_event_t* event);
-const char* event_anchor(yaml_event_t* event);
+size_t list_len(TokenList* list);
+Token* nth_tok(TokenList* list, size_t n);
+const char* list_err(TokenList* list);
+int tok_type(Token* tok);
+const char* tok_value(Token* tok);
+const char* tok_anchor(Token* tok);
 
 /* Enum values */
 
