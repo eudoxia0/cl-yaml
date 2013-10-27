@@ -1,10 +1,9 @@
-#include <stdlib.h>
 #include <yaml.h>
 #define LIST_CHUNK_SIZE 64
 
 typedef struct {
-  const char* anchor;
-  const char* value;
+  char* anchor;
+  char* value;
   int type;
 } Token;
 
@@ -24,6 +23,8 @@ typedef struct {
 TokenList* createTokenList(void);
 void appendToken(TokenList* list, Token tok);
 void destroyTokenList(TokenList* list);
+const char* copy(const char* source);
+
 TokenList* tokenize(const char* str, size_t len);
 
 

@@ -22,6 +22,10 @@ void destroyTokenList(TokenList* list) {
   free(list->data);
 }
 
+const char* copy(const char* source) {
+  return source;
+}
+
 TokenList* tokenize(const char* str, size_t len) {
   /* Initialization */
   yaml_parser_t parser;
@@ -33,7 +37,7 @@ TokenList* tokenize(const char* str, size_t len) {
     return tokens;
   }
   if(len == 0) {
-    tokens->err = "Can't parse a string with length zero.";
+    tokens->err = "Can't parse a bstring with length zero.";
     return tokens;
   }
   if(!yaml_parser_initialize(&parser)) {
@@ -44,6 +48,8 @@ TokenList* tokenize(const char* str, size_t len) {
 
   while(event.type != YAML_STREAM_END_EVENT) {
     Token tok;
+    size_t value_len = 0;
+    size_t anchor_len = 0;
     tok.value = NULL;
     tok.anchor = NULL;
     if(!yaml_parser_parse(&parser, &event)) {
@@ -53,8 +59,18 @@ TokenList* tokenize(const char* str, size_t len) {
     tok.type = event.type;
     switch(event.type) {
     case YAML_SCALAR_EVENT:
-      tok.value = (const char*)event.data.scalar.value;
-      tok.anchor = (const char*)event.data.scalar.anchor;
+      tok.value = (char*)event.data.scalar.value;
+      tok.anchor = (char*)event.data.scalar.anchor;
+      if(tok.value) {
+        value_len = strlen(tok.value);
+        tok.value = malloc(value_len+1);
+        strcpy(tok.value, (const char*)event.data.scalar.value);
+      }
+      if(tok.anchor) {
+        anchor_len = strlen(tok.anchor);
+        tok.anchor = malloc(anchor_len+1);
+        strcpy(tok.anchor, (const char*)event.data.scalar.anchor);
+      }
       break;
     case YAML_ALIAS_EVENT:
       tok.value = (const char*)event.data.alias.anchor;
