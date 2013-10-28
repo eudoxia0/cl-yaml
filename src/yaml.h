@@ -1,5 +1,5 @@
 #include <yaml.h>
-#define LIST_CHUNK_SIZE 64
+#define LIST_CHUNK_SIZE 128
 
 typedef struct {
   char* anchor;

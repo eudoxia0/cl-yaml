@@ -12,7 +12,7 @@ TokenList* createTokenList(void) {
 void appendToken(TokenList* list, Token tok) {
   if((list->len + 1) == list->cap) {
     list->cap += LIST_CHUNK_SIZE;
-    list->data = (Token*)realloc(list->data,list->cap);
+    list->data = (Token*)realloc(list->data,list->cap*sizeof(Token));
   }
   list->data[list->len] = tok;
   list->len++;
@@ -20,6 +20,7 @@ void appendToken(TokenList* list, Token tok) {
 
 void destroyTokenList(TokenList* list) {
   free(list->data);
+  free(list);
 }
 
 const char* copy(const char* source) {
@@ -74,7 +75,7 @@ TokenList* tokenize(const char* str, size_t len) {
       }
       break;
     case YAML_ALIAS_EVENT:
-      tok.value = (const char*)event.data.alias.anchor;
+      tok.value = (char*)event.data.alias.anchor;
       break;
     default:
       /* The token only carries type information */
