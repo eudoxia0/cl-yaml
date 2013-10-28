@@ -50,6 +50,7 @@ TokenList* tokenize(const char* str, size_t len) {
     Token tok;
     size_t value_len = 0;
     size_t anchor_len = 0;
+    tok.type = 0;
     tok.value = NULL;
     tok.anchor = NULL;
     if(!yaml_parser_parse(&parser, &event)) {
@@ -83,9 +84,9 @@ TokenList* tokenize(const char* str, size_t len) {
     if(event.type != YAML_STREAM_END_EVENT)
       yaml_event_delete(&event);
   } while(event.type != YAML_STREAM_END_EVENT);
-  yaml_event_delete(&event);
   
   /* Finalize */
+  yaml_event_delete(&event);
   yaml_parser_delete(&parser);
 
   return tokens;
@@ -100,6 +101,11 @@ size_t list_len(TokenList* list) {
 
 Token* nth_tok(TokenList* list, size_t n) {
   return &list->data[n];
+}
+
+void destroy_nth_tok(TokenList* list, size_t n) {
+  free(list->data[n].value);
+  free(list->data[n].anchor);
 }
 
 const char* list_err(TokenList* list) {

@@ -32,6 +32,7 @@ TokenList* tokenize(const char* str, size_t len);
 
 size_t list_len(TokenList* list);
 Token* nth_tok(TokenList* list, size_t n);
+void destroy_nth_tok(TokenList* list, size_t n);
 const char* list_err(TokenList* list);
 int tok_type(Token* tok);
 const char* tok_value(Token* tok);

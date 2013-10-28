@@ -41,10 +41,12 @@
             (let* ((tok (nth-tok tok-list i))
                    (type (gethash (tok-type tok) +enum+)))
               (if type
-                  (vector-push (list type
-                                     (tok-value tok)
-                                     (tok-anchor tok))
-                               tokens))))
+                  (progn
+                    (vector-push (list type
+                                       (tok-value tok)
+                                       (tok-anchor tok))
+                                 tokens)
+                    (destroy-nth-tok tok-list i)))))
           (destroy-token-list tok-list)
           (group-documents (clean tokens))))))
 

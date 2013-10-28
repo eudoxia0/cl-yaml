@@ -4,6 +4,7 @@
            :list-len
            :list-err
            :nth-tok
+           :destroy-nth-tok
            :tok-type
            :tok-value
            :tok-anchor
@@ -34,6 +35,7 @@
 
 (defcfun ("list_len" list-len) :int (list :pointer))
 (defcfun ("nth_tok" nth-tok) :pointer (list :pointer) (n :int))
+(defcfun ("destroy_nth_tok" destroy-nth-tok) :void (list :pointer) (n :int))
 (defcfun ("list_err" list-err) :string (list :pointer))
 (defcfun ("tok_type" tok-type) :int (tok :pointer))
 (defcfun ("tok_value" tok-value) :string (tok :pointer))
