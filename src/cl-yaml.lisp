@@ -33,7 +33,7 @@
 
 (defun process (str &optional (len (length str)))
   (let ((tok-list (tokenize str len))
-        (tokens (make-array 64 :fill-pointer 0)))
+        (tokens (make-array 64 :fill-pointer 0 :adjustable t)))
     (if (list-err tok-list)
         (error "Parsing error")
         (progn
@@ -42,10 +42,10 @@
                    (type (gethash (tok-type tok) +enum+)))
               (if type
                   (progn
-                    (vector-push (list type
-                                       (tok-value tok)
-                                       (tok-anchor tok))
-                                 tokens)
+                    (vector-push-extend (list type
+                                              (tok-value tok)
+                                              (tok-anchor tok))
+                                        tokens)
                     (destroy-nth-tok tok-list i)))))
           (destroy-token-list tok-list)
           (group-documents (clean tokens))))))

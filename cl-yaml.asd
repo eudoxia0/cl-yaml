@@ -19,7 +19,7 @@
 
 (defmethod perform ((o load-op) (c c->so)) t)
 
-(defparameter +c-flags+ "-Wall -Wextra -c -fPIC -O0 -ansi")
+(defparameter +c-flags+ "-Wall -Wextra -c -fPIC -O0 -g")
 (defparameter +linker-flags+ "-lyaml")
 
 (defun comp (file out)
