@@ -1,32 +1,31 @@
 (defpackage yaml-test
-  (:use :cl
-        :fiveam
-        :cffi))
+  (:use :cl :fiveam)
+  (:import-from :yaml
+                :parse
+                :emit))
 (in-package :yaml-test)
 
-(def-suite list
-  :description "Parsing lists")
+(def-suite yaml
+  :description "General unit tests.")
 
-(test (flat-int nil list)
-  (is (equal (yaml:parse "[1,2,3]") (list 1 2 3))))
+(test finishes
+  (finishes
+    (parse "foo")
+    (parse "bar")
+    (parse "[1,2,3]")
+    (parse "[[a,b],[c,d]]")
+    (parse "{a : 1, b : 2, c : 3}")))
 
-(test (flat-str nil list)
-  (is (equal (yaml:parse "[\"foo\",\"bar\"]") (list "foo" "bar"))))
+(test flat-int
+  (is (equal (parse "[1,2,3]") (list 1 2 3))))
 
-(test (nested nil list)
-  (is (equal (yaml:parse "[[a,1],[b,2],[c,3]]") (list (list "a" 1)
-						      (list "b" 2)
-						      (list "c" 3)))))
+(test flat-str
+  (is (equal (parse "[\"foo\",\"bar\"]") (list "foo" "bar"))))
 
-(def-suite map
-  :description "Parsing maps")
-
-(test (flat-map nil map)
-  (is (equalp (yaml:parse "{a : 1, b : 2, c : 3}")
-	     (let ((hash (make-hash-table :test #'equal)))
-	       (setf (gethash "a" hash) 1
-		     (gethash "b" hash) 2
-		     (gethash "c" hash) 3)
-	       hash))))
+(test nested
+  (is (equal (parse "[[a,1],[b,2],[c,3]]")
+             (list (list "a" 1)
+                   (list "b" 2)
+                   (list "c" 3)))))
 
 (run!)
