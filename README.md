@@ -1,5 +1,7 @@
 # cl-yaml
 
+[![Build Status](https://travis-ci.org/eudoxia0/cl-yaml.svg?branch=master)](https://travis-ci.org/eudoxia0/cl-yaml)
+
 A YAML parser and emitter.
 
 # Overview
