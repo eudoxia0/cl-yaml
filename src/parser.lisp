@@ -1,6 +1,8 @@
 (in-package :cl-user)
 (defpackage yaml.parser
   (:use :cl)
+  (:import-from :alexandria
+                :destructuring-case)
   (:import-from :libyaml.macros
                 :with-parser
                 :with-event)
@@ -72,7 +74,34 @@
               (signal-reader-error parser)))))))
 
 (defun parse-tokens (vector)
-  vector)
+  (loop for token across vector do
+    (print (first token))
+    (destructuring-case token
+      ;; Documents
+      ((:document-start-event)
+       t)
+      ((:document-end-event)
+       t)
+      ;; Alias event
+      ((:alias-event &key anchor)
+       (print anchor))
+      ;; Scalar
+      ((:scalar-event &key anchor tag value)
+       (print (list anchor tag value)))
+      ;; Sequence start event
+      ((:sequence-start-event &key anchor tag)
+       (print (list anchor tag)))
+      ;; Mapping start event
+      ((:mapping-start-event &key anchor tag)
+       (print (list anchor tag)))
+      ;; End events
+      ((:sequence-end-event)
+       t)
+      ((:mapping-end-event)
+       t)
+      ;; Do nothing
+      ((t &rest rest)
+       t))))
 
 ;;; The public interface
 

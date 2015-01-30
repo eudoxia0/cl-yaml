@@ -6,7 +6,8 @@
   :homepage "https://github.com/eudoxia0/cl-yaml"
   :bug-tracker "https://github.com/eudoxia0/cl-yaml/issues"
   :source-control (:git "git@github.com:eudoxia0/cl-yaml.git")
-  :depends-on (:cl-libyaml)
+  :depends-on (:cl-libyaml
+               :alexandria)
   :components ((:module "src"
                 :serial t
                 :components
