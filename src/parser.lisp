@@ -74,34 +74,47 @@
               (signal-reader-error parser)))))))
 
 (defun parse-tokens (vector)
-  (loop for token across vector do
-    (print (first token))
-    (destructuring-case token
-      ;; Documents
-      ((:document-start-event)
-       t)
-      ((:document-end-event)
-       t)
-      ;; Alias event
-      ((:alias-event &key anchor)
-       (print anchor))
-      ;; Scalar
-      ((:scalar-event &key anchor tag value)
-       (print (list anchor tag value)))
-      ;; Sequence start event
-      ((:sequence-start-event &key anchor tag)
-       (print (list anchor tag)))
-      ;; Mapping start event
-      ((:mapping-start-event &key anchor tag)
-       (print (list anchor tag)))
-      ;; End events
-      ((:sequence-end-event)
-       t)
-      ((:mapping-end-event)
-       t)
-      ;; Do nothing
-      ((t &rest rest)
-       t))))
+  (let ((contexts (list nil)))
+    (loop for token across vector do
+      (destructuring-case token
+        ;; Documents
+        ((:document-start-event)
+         (push (list) contexts))
+        ((:document-end-event)
+         (let ((con (pop contexts)))
+           (setf (first contexts)
+                 (append (first contexts)
+                         (cons :document con)))))
+        ;; Alias event
+        ((:alias-event &key anchor)
+         (print anchor))
+        ;; Scalar
+        ((:scalar-event &key anchor tag value)
+         (setf (first contexts)
+               (append (first contexts)
+                       (list value))))
+        ;; Sequence start event
+        ((:sequence-start-event &key anchor tag)
+         (push (list) contexts))
+        ;; Mapping start event
+        ((:mapping-start-event &key anchor tag)
+         (push (list) contexts))
+        ;; End events
+        ((:sequence-end-event)
+         (let ((con (pop contexts)))
+           (setf (first contexts)
+                 (append (first contexts)
+                         (list con)))))
+        ((:mapping-end-event)
+         (let ((con (pop contexts)))
+           (setf (first contexts)
+                 (append (first contexts)
+                         (list
+                          (alexandria:plist-hash-table con :test #'equal))))))
+        ;; Do nothing
+        ((t &rest rest)
+         t)))
+    (first contexts)))
 
 ;;; The public interface
 
