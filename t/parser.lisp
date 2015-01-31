@@ -10,5 +10,5 @@
 
 (test lists
   (is
-   (equal (yaml.parser:parse "[a, b, c]")
+   (equal (yaml.parser:parse-string "[a, b, c]")
           (list :document (list "a" "b" "c")))))

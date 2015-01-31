@@ -31,6 +31,20 @@ values. The strategy can be customized by setting the value of
 
 # Usage
 
+## Examples
+
+```lisp
+CL-USER> (yaml:parse "[1, 2, 3]")
+(:DOCUMENT (1 2 3))
+CL-USER> (yaml:parse "{ a: 1, b: 2 }")
+(:DOCUMENT {"a" => 1, "b" => 2})
+CL-USER> (yaml:parse "- Mercury
+- Venus
+- Earth
+- Mars")
+(:DOCUMENT ("Mercury" "Venus" "Earth" "Mars"))
+```
+
 # License
 
 Copyright (c) 2013-2015 Fernando Borretti
