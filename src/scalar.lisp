@@ -37,14 +37,14 @@
   (ppcre:create-scanner
    "^[-+]?(\\.[0-9]+|[0-9]+(\\.[0-9]*)?)([eE][-+]?[0-9]+)?$"))
 
+(defparameter +nan-names+
+  (list ".nan" ".NaN" ".NAN"))
+
 (defparameter +positive-infinity-scanner+
   (ppcre:create-scanner "^[+]?(\\.inf|\\.Inf|\\.INF)$"))
 
 (defparameter +negative-infinity-scanner+
   (ppcre:create-scanner "^-(\\.inf|\\.Inf|\\.INF)$"))
-
-(defparameter +nan-names+
-  (list ".nan" ".NaN" ".NAN"))
 
 ;;; The actual parser
 
