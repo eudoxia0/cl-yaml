@@ -4,7 +4,23 @@
 
 A YAML parser and emitter.
 
-# Overview
+# Usage
+
+## Examples
+
+```lisp
+CL-USER> (yaml:parse "[1, 2, 3]")
+(:DOCUMENT (1 2 3))
+CL-USER> (yaml:parse "{ a: 1, b: 2 }")
+(:DOCUMENT {"a" => 1, "b" => 2})
+CL-USER> (yaml:parse "- Mercury
+- Venus
+- Earth
+- Mars")
+(:DOCUMENT ("Mercury" "Venus" "Earth" "Mars"))
+```
+
+# Documentation
 
 ## Type Mapping
 
@@ -45,22 +61,6 @@ values. The strategy can be customized by setting the value of
 3. `:best-effort`: Use implementation-specific values whenever possible, fall
    back on `:keyword` in unsupported implementations. On SBCL and Allegro Common
    Lisp, NaN and infinity can be represented.
-
-# Usage
-
-## Examples
-
-```lisp
-CL-USER> (yaml:parse "[1, 2, 3]")
-(:DOCUMENT (1 2 3))
-CL-USER> (yaml:parse "{ a: 1, b: 2 }")
-(:DOCUMENT {"a" => 1, "b" => 2})
-CL-USER> (yaml:parse "- Mercury
-- Venus
-- Earth
-- Mars")
-(:DOCUMENT ("Mercury" "Venus" "Earth" "Mars"))
-```
 
 [core-schema]: http://www.yaml.org/spec/1.2/spec.html#id2804923
 
