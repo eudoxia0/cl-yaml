@@ -31,14 +31,16 @@ CL-USER> (yaml:parse "- Mercury
 ## Emitting
 
 ```lisp
-CL-USER> (yaml:emit-to-string 1)
-"1"
+CL-USER> (yaml:emit-to-string (list 1 2 3))
+"[1, 2, 3]"
 
-CL-USER> (yaml:emit-to-string 3.14)
-"3.14"
+CL-USER> (yaml:emit-to-string
+           (alexandria:alist-hash-table '(("a" . 1)
+                                          ("b" . 2))))
+"{ b: 2, a: 1 }"
 
-CL-USER> (yaml:emit-to-string t)
-"true"
+CL-USER> (yaml:emit (list t 123 3.14) *standard-output*)
+[true, 123, 3.14]
 ```
 
 # Documentation
