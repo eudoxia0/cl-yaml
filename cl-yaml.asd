@@ -8,7 +8,8 @@
   :source-control (:git "git@github.com:eudoxia0/cl-yaml.git")
   :depends-on (:cl-libyaml
                :alexandria
-               :cl-ppcre)
+               :cl-ppcre
+               :parse-number)
   :components ((:module "src"
                 :serial t
                 :components
