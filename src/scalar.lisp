@@ -1,9 +1,9 @@
 (in-package :cl-user)
-(defpackage yaml.parser
+(defpackage yaml.scalar
   (:use :cl)
   (:export :parse-scalar)
   (:documentation "Parser for scalar values."))
-(in-package :yaml.parser)
+(in-package :yaml.scalar)
 
 ;;; Constants
 
@@ -25,20 +25,23 @@
   (list "false" "False" "FALSE"))
 
 (defparameter +integer-scanner+
-  (ppcre:create-scanner "[-+]?[0-9]+"))
+  (ppcre:create-scanner "([-+]?[0-9]+)"))
 
 (defparameter +octal-integer-scanner+
-  (ppcre:create-scanner "0o[0-7]+"))
+  (ppcre:create-scanner "0o([0-7]+)"))
 
 (defparameter +hex-integer-scanner+
-  (ppcre:create-scanner "0x[0-9a-fA-F]+"))
+  (ppcre:create-scanner "0x([0-9a-fA-F]+)"))
 
 (defparameter +float-scanner+
   (ppcre:create-scanner
    "[-+]?(\\.[0-9]+|[0-9]+(\\.[0-9]*)?)([eE][-+]?[0-9]+)?"))
 
-(defparameter +infinity-scanner+
-  (ppcre:create-scanner "[-+]?(\\.inf|\\.Inf|\\.INF)"))
+(defparameter +positive-infinity-scanner+
+  (ppcre:create-scanner "[+]?(\\.inf|\\.Inf|\\.INF)"))
+
+(defparameter +negative-infinity-scanner+
+  (ppcre:create-scanner "-(\\.inf|\\.Inf|\\.INF)"))
 
 (defparameter +nan-names+
   (list ".nan" ".NaN" ".NAN"))
@@ -57,8 +60,20 @@
     ((member string +false-names+ :test #'equal)
      +false+)
     ;; Integers
+    ((ppcre:scan +integer-scanner+ string)
+     (parse-integer string))
+    ((ppcre:scan +octal-integer-scanner+ string)
+     (parse-integer (subseq string 2) :radix 8))
+    ((ppcre:scan +hex-integer-scanner+ string)
+     (parse-integer (subseq string 2) :radix 16))
     ;; Floating-point numbers
+    ;; Special floats
     ((member string +nan-names+ :test #'equal)
-     +not-a-number+)
+     (yaml.float:not-a-number))
+    ((ppcre:scan +positive-infinity-scanner+ string)
+     (yaml.float:positive-infinity))
+    ((ppcre:scan +negative-infinity-scanner+ string)
+     (yaml.float:negative-infinity))
+    ;; Just a string
     (t
      string)))
