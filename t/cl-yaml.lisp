@@ -4,3 +4,4 @@
 (in-package :cl-yaml-test)
 
 (run! 'cl-yaml-test.parser:parser)
+(run! 'cl-yaml-test.float:float)
