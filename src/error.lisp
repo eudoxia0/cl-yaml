@@ -3,6 +3,7 @@
   (:use :cl)
   (:export :yaml-error
            :parsing-error
+           :unsupported-float-value
            :message
            :line
            :column)
@@ -33,3 +34,12 @@
              (column condition)
              (message condition))))
   (:documentation "An error when parsing a YAML file."))
+
+(define-condition unsupported-float-value (yaml-error)
+  ()
+  (:report
+   (lambda (condition stream)
+     (format stream "Unsupported IEEE float value.")))
+  (:documentation "This condition is signalled when the parser receives an IEEE
+ floating point special value it cannot parse. This is only signalled when the
+ floating point strategy is :error."))
