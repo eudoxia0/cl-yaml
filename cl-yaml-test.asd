@@ -6,5 +6,6 @@
   :components ((:module "t"
                 :serial t
                 :components
-                ((:file "parser")
+                ((:file "float")
+                 (:file "parser")
                  (:file "cl-yaml")))))
