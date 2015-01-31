@@ -42,4 +42,6 @@
 
 (define-test-cases (lists)
   ((list 1 2 3)
+   "[1, 2, 3]")
+  ((vector 1 2 3)
    "[1, 2, 3]"))

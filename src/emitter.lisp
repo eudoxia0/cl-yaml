@@ -36,6 +36,9 @@
       (write-string ", " stream)))
   (write-string "]" stream))
 
+(defmethod encode ((vector vector) stream)
+  (encode (loop for elem across vector collecting elem) stream))
+
 ;;; Interface
 
 (defun emit (value stream)
