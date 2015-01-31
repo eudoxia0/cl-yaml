@@ -67,6 +67,8 @@
     ((ppcre:scan +hex-integer-scanner+ string)
      (parse-integer (subseq string 2) :radix 16))
     ;; Floating-point numbers
+    ((ppcre:scan +float-scanner+ string)
+     (parse-number:parse-real-number string))
     ;; Special floats
     ((member string +nan-names+ :test #'equal)
      (yaml.float:not-a-number))
