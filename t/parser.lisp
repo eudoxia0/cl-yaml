@@ -1,6 +1,8 @@
 (in-package :cl-user)
 (defpackage cl-yaml-test.parser
   (:use :cl :fiveam)
+  (:import-from :alexandria
+                :alist-hash-table)
   (:export :parser))
 (in-package :cl-yaml-test.parser)
 

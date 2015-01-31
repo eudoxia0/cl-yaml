@@ -9,4 +9,5 @@
                 ((:file "float")
                  (:file "scalar")
                  (:file "parser")
+                 (:file "emitter")
                  (:file "cl-yaml")))))
