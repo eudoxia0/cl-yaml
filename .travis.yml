@@ -3,6 +3,7 @@ language: common-lisp
 env:
   matrix:
     - LISP=sbcl
+    - LISP=ccl
 
 install:
   # Install cl-travis
