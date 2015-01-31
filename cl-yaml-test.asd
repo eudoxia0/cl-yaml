@@ -2,7 +2,8 @@
   :author "Fernando Borretti <eudoxiahp@gmail.com>"
   :license "MIT"
   :depends-on (:cl-yaml
-               :fiveam)
+               :fiveam
+               :alexandria)
   :components ((:module "t"
                 :serial t
                 :components

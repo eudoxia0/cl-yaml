@@ -28,7 +28,12 @@
   "Encode a float."
   (princ float stream))
 
+(defmethod encode ((string string) stream)
+  "Encode a string."
+  (write-string string stream))
+
 (defmethod encode ((list list) stream)
+  "Encode a list."
   (write-string "[" stream)
   (loop for sublist on list do
     (encode (first sublist) stream)
@@ -37,13 +42,28 @@
   (write-string "]" stream))
 
 (defmethod encode ((vector vector) stream)
+  "Encode a vector."
   (encode (loop for elem across vector collecting elem) stream))
+
+(defmethod encode ((table hash-table) stream)
+  "Encode a hash table."
+  (write-string "{ " stream)
+  (loop for sublist on (alexandria:hash-table-keys table) do
+    (let ((key (first sublist)))
+      (encode key stream)
+      (write-string ": " stream)
+      (encode (gethash key table) stream)
+      (when (rest sublist)
+        (write-string ", " stream))))
+  (write-string " }" stream))
 
 ;;; Interface
 
 (defun emit (value stream)
+  "Emit a value to a stream."
   (encode value stream))
 
 (defun emit-to-string (value)
+  "Emit a value to string."
   (with-output-to-string (stream)
     (emit value stream)))

@@ -1,6 +1,8 @@
 (in-package :cl-user)
 (defpackage cl-yaml-test.emitter
   (:use :cl :fiveam)
+  (:import-from :alexandria
+                :alist-hash-table)
   (:export :emitter))
 (in-package :cl-yaml-test.emitter)
 
