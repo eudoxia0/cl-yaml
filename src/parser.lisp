@@ -91,7 +91,7 @@
         ;; Scalar
         ((:scalar-event &key anchor tag value)
          (setf (first contexts)
-               (append (first contexts)
+               (append (list (yaml.scalar:parse-scalar (first (first contexts))))
                        (list value))))
         ;; Sequence start event
         ((:sequence-start-event &key anchor tag)
