@@ -7,6 +7,8 @@
   (:documentation "The YAML emitter."))
 (in-package :yaml.emitter)
 
+;;; Encoder functions
+
 (defgeneric encode (value stream)
   (:documentation "Write the YAML corresponding to value to a stream."))
 
@@ -25,6 +27,16 @@
 (defmethod encode ((float float) stream)
   "Encode a float."
   (princ float stream))
+
+(defmethod encode ((list list) stream)
+  (write-string "[" stream)
+  (loop for sublist on list do
+    (encode (first sublist) stream)
+    (when (rest sublist)
+      (write-string ", " stream)))
+  (write-string "]" stream))
+
+;;; Interface
 
 (defun emit (value stream)
   (encode value stream))
