@@ -7,5 +7,6 @@
                 :serial t
                 :components
                 ((:file "float")
+                 (:file "scalar")
                  (:file "parser")
                  (:file "cl-yaml")))))

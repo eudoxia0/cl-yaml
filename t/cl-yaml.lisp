@@ -5,3 +5,4 @@
 
 (run! 'cl-yaml-test.parser:parser)
 (run! 'cl-yaml-test.float:float)
+(run! 'cl-yaml-test.scalar:scalar)
