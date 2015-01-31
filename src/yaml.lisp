@@ -14,3 +14,9 @@
 
 (defmethod parse ((input pathname))
   (parse (uiop:read-file-string input)))
+
+(defun emit (value stream)
+  (yaml.emitter:emit value stream))
+
+(defun emit-to-string (value)
+  (yaml.emitter:emit-to-string value))
