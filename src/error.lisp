@@ -39,6 +39,7 @@
   ()
   (:report
    (lambda (condition stream)
+     (declare (ignore condition))
      (format stream "Unsupported IEEE float value.")))
   (:documentation "This condition is signalled when the parser receives an IEEE
  floating point special value it cannot parse. This is only signalled when the
