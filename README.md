@@ -6,7 +6,7 @@ A YAML parser and emitter.
 
 # Usage
 
-The `yaml` package exports two functions:
+The `yaml` package exports three functions:
 
 * `(parse string-or-pathname)`: Parses a string or a pathname into Lisp values.
 * `(emit value stream)`: Emit a Lisp value into a stream.
@@ -39,6 +39,7 @@ CL-USER> (yaml:emit-to-string 3.14)
 
 CL-USER> (yaml:emit-to-string t)
 "true"
+```
 
 # Documentation
 
