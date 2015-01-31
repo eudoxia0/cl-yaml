@@ -25,23 +25,23 @@
   (list "false" "False" "FALSE"))
 
 (defparameter +integer-scanner+
-  (ppcre:create-scanner "([-+]?[0-9]+)\\$"))
+  (ppcre:create-scanner "^([-+]?[0-9]+)$"))
 
 (defparameter +octal-integer-scanner+
-  (ppcre:create-scanner "0o([0-7]+)\\$"))
+  (ppcre:create-scanner "^0o([0-7]+)$"))
 
 (defparameter +hex-integer-scanner+
-  (ppcre:create-scanner "0x([0-9a-fA-F]+)\\$"))
+  (ppcre:create-scanner "^0x([0-9a-fA-F]+)$"))
 
 (defparameter +float-scanner+
   (ppcre:create-scanner
-   "[-+]?(\\.[0-9]+|[0-9]+(\\.[0-9]*)?)([eE][-+]?[0-9]+)?\\$"))
+   "^[-+]?(\\.[0-9]+|[0-9]+(\\.[0-9]*)?)([eE][-+]?[0-9]+)?$"))
 
 (defparameter +positive-infinity-scanner+
-  (ppcre:create-scanner "[+]?(\\.inf|\\.Inf|\\.INF)\\$"))
+  (ppcre:create-scanner "^[+]?(\\.inf|\\.Inf|\\.INF)$"))
 
 (defparameter +negative-infinity-scanner+
-  (ppcre:create-scanner "-(\\.inf|\\.Inf|\\.INF)\\$"))
+  (ppcre:create-scanner "^-(\\.inf|\\.Inf|\\.INF)$"))
 
 (defparameter +nan-names+
   (list ".nan" ".NaN" ".NAN"))
