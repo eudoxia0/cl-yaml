@@ -7,11 +7,14 @@
   :bug-tracker "https://github.com/eudoxia0/cl-yaml/issues"
   :source-control (:git "git@github.com:eudoxia0/cl-yaml.git")
   :depends-on (:cl-libyaml
-               :alexandria)
+               :alexandria
+               :cl-ppcre)
   :components ((:module "src"
                 :serial t
                 :components
                 ((:file "error")
+                 (:file "float")
+                 (:file "scalar")
                  (:file "parser")
                  (:file "emitter"))))
   :description "A YAML parser and emitter."
