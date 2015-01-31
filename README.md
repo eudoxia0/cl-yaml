@@ -6,6 +6,23 @@ A YAML parser and emitter.
 
 # Overview
 
+## Type Mapping
+
+cl-yaml uses YAML's [Core Schema][core-schema] to map YAML values to Lisp types
+an vice versa. A table showing the correspondence of values and types is shown
+below:
+
+| YAML type  | Lisp type         |
+| ---------- | ----------------- |
+| Null       | `nil`             |
+| Boolean    | `t` and `nil`     |
+| Integer    | Integer           |
+| Float      | Double float      |
+| String     | String            |
+| List       | List              |
+| Map        | Hash table        |
+| Document   | `(:document ...)` |
+
 ## IEEE Floating Point Support
 
 Common Lisp doesn't natively support the IEEE special floating point values: NaN
@@ -44,6 +61,8 @@ CL-USER> (yaml:parse "- Mercury
 - Mars")
 (:DOCUMENT ("Mercury" "Venus" "Earth" "Mars"))
 ```
+
+[core-schema]: http://www.yaml.org/spec/1.2/spec.html#id2804923
 
 # License
 
