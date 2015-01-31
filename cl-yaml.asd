@@ -17,7 +17,8 @@
                  (:file "float")
                  (:file "scalar")
                  (:file "parser")
-                 (:file "emitter"))))
+                 (:file "emitter")
+                 (:file "yaml"))))
   :description "A YAML parser and emitter."
   :long-description
   #.(uiop:read-file-string
