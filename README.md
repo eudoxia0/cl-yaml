@@ -6,19 +6,39 @@ A YAML parser and emitter.
 
 # Usage
 
-## Examples
+The `yaml` package exports two functions:
+
+* `(parse string-or-pathname)`: Parses a string or a pathname into Lisp values.
+* `(emit value stream)`: Emit a Lisp value into a stream.
+* `(emit-to-string value)`: Emit a Lisp value into a string.
+
+## Parsing
 
 ```lisp
 CL-USER> (yaml:parse "[1, 2, 3]")
 (:DOCUMENT (1 2 3))
+
 CL-USER> (yaml:parse "{ a: 1, b: 2 }")
 (:DOCUMENT {"a" => 1, "b" => 2})
+
 CL-USER> (yaml:parse "- Mercury
 - Venus
 - Earth
 - Mars")
 (:DOCUMENT ("Mercury" "Venus" "Earth" "Mars"))
 ```
+
+## Emitting
+
+```lisp
+CL-USER> (yaml:emit-to-string 1)
+"1"
+
+CL-USER> (yaml:emit-to-string 3.14)
+"3.14"
+
+CL-USER> (yaml:emit-to-string t)
+"true"
 
 # Documentation
 

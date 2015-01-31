@@ -1,7 +1,9 @@
 (in-package :cl-user)
 (defpackage yaml
   (:use :cl)
-  (:export :parse)
+  (:export :parse
+           :emit
+           :emit-to-string)
   (:documentation "The main YAML interface."))
 (in-package :yaml)
 
