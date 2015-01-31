@@ -1,7 +1,10 @@
 (in-package :cl-user)
 (defpackage yaml.float
   (:use :cl)
-  (:export :*float-strategy*)
+  (:export :*float-strategy*
+           :not-a-number
+           :positive-infinity
+           :negative-infinity)
   (:documentation "Handle IEEE floating point values."))
 (in-package :yaml.float)
 
@@ -13,13 +16,35 @@
     (- sb-ext:double-float-positive-infinity
        sb-ext:double-float-positive-infinity)))
 
-(defun nan-value ()
+(defun not-a-number ()
   (case *float-strategy*
     (:error
      (error 'yaml.error:unsupported-float-value))
     (:keyword
      :NaN)
     (:best-effort
-     #+allegro #.excl:*nan-double*
      #+sbcl *sbcl-nan-value*
-     #-(or allegro sbcl) :NaN)))
+     #+allegro #.excl:*nan-double*
+     #-(or sbcl allegro) :NaN)))
+
+(defun positive-infinity ()
+  (case *float-strategy*
+    (:error
+     (error 'yaml.error:unsupported-float-value))
+    (:keyword
+     :+Inf)
+    (:best-effort
+     #+sbcl sb-ext:double-float-positive-infinity
+     #+allegro #.excl:*infinity-double*
+     #-(or sbcl allegro) :+Inf)))
+
+(defun negative-infinity ()
+  (case *float-strategy*
+    (:error
+     (error 'yaml.error:unsupported-float-value))
+    (:keyword
+     :-Inf)
+    (:best-effort
+     #+sbcl sb-ext:double-float-negative-infinity
+     #+allegro #.excl:*negative-infinity-double*
+     #-(or sbcl allegro) :-Inf)))
