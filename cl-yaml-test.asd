@@ -1,6 +1,7 @@
 (defsystem cl-yaml-test
   :author "Fernando Borretti <eudoxiahp@gmail.com>"
   :license "MIT"
+  :description "cl-yaml tests."
   :depends-on (:cl-yaml
                :fiveam
                :alexandria)
