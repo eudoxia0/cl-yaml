@@ -16,16 +16,16 @@ The `yaml` package exports three functions:
 
 ```lisp
 CL-USER> (yaml:parse "[1, 2, 3]")
-(:DOCUMENT (1 2 3))
+(:DOCUMENTS (1 2 3))
 
 CL-USER> (yaml:parse "{ a: 1, b: 2 }")
-(:DOCUMENT {"a" => 1, "b" => 2})
+(:DOCUMENTS {"a" => 1, "b" => 2})
 
 CL-USER> (yaml:parse "- Mercury
 - Venus
 - Earth
 - Mars")
-(:DOCUMENT ("Mercury" "Venus" "Earth" "Mars"))
+(:DOCUMENTS ("Mercury" "Venus" "Earth" "Mars"))
 ```
 
 ## Emitting
