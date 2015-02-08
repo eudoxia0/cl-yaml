@@ -75,7 +75,7 @@
                 (signal-reader-error parser))))))))
 
 (defun parse-tokens (vector)
-  (let ((contexts (list nil)))
+  (let ((contexts (list (list :documents))))
     (loop for token across vector do
       (destructuring-case token
         ;; Documents
@@ -85,7 +85,7 @@
          (let ((con (pop contexts)))
            (setf (first contexts)
                  (append (first contexts)
-                         (cons :document con)))))
+                         con))))
         ;; Alias event
         ((:alias-event &key anchor)
          (declare (ignore anchor))
