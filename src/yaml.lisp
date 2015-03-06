@@ -7,19 +7,19 @@
   (:documentation "The main YAML interface."))
 (in-package :yaml)
 
-(defgeneric parse (input &key single-document-p)
+(defgeneric parse (input &key multi-document-p)
   (:documentation "Parse a YAML string or a pathname to a YAML file into Lisp
  data."))
 
-(defmethod parse ((input string) &key single-document-p)
+(defmethod parse ((input string) &key multi-document-p)
   (let ((parsed (yaml.parser:parse-string input)))
-    (if single-document-p
-        (second parsed)
-        parsed)))
+    (if multi-document-p
+        parsed
+        (second parsed))))
 
-(defmethod parse ((input pathname) &key single-document-p)
+(defmethod parse ((input pathname) &key multi-document-p)
   (parse (uiop:read-file-string input)
-         :single-document-p single-document-p))
+         :multi-document-p multi-document-p))
 
 (defun emit (value stream)
   (yaml.emitter:emit value stream))
