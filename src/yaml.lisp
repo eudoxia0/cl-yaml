@@ -18,7 +18,8 @@
         parsed)))
 
 (defmethod parse ((input pathname) &key single-document-p)
-  (parse (uiop:read-file-string input) :single-document-p t))
+  (parse (uiop:read-file-string input)
+         :single-document-p single-document-p))
 
 (defun emit (value stream)
   (yaml.emitter:emit value stream))
