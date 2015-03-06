@@ -13,8 +13,7 @@
 (defmacro define-test-cases ((name) &rest pairs)
   `(test ,name
      ,@(loop for (string form) in pairs collecting
-         `(is (equal (getf (yaml.parser:parse-string ,string)
-                           :document)
+         `(is (equal (second (yaml.parser:parse-string ,string))
                      ,form)))))
 
 (define-test-cases (special-scalars)
