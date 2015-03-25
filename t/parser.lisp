@@ -56,3 +56,9 @@
   ;; Mid-centered list
   ("[1, [2, [3], 4], 5]"
    (list 1 (list 2 (list 3) 4) 5)))
+
+(test top-level-parsing
+  (let ((data (yaml:parse "[1,2,3]")))
+    (is
+     (equal data
+            (list 1 2 3)))))

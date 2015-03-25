@@ -34,7 +34,8 @@
 (test integers
   (scalar-equal "123" 123)
   (scalar-equal "012345" 12345)
-  (scalar-equal "-555" -555))
+  (scalar-equal "-555" -555)
+  (scalar-equal "0x25" 37))
 
 (test floats
   (scalar-equal "1.234" 1.234)

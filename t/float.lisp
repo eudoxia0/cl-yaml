@@ -28,3 +28,12 @@
      (sb-ext:float-infinity-p (yaml.float:positive-infinity)))
     (is-true
      (sb-ext:float-infinity-p (yaml.float:negative-infinity)))))
+
+(test error-strategy
+  (let ((yaml.float:*float-strategy* :error))
+    (signals yaml.error:unsupported-float-value
+      (yaml.float:not-a-number))
+    (signals yaml.error:unsupported-float-value
+      (yaml.float:positive-infinity))
+    (signals yaml.error:unsupported-float-value
+      (yaml.float:negative-infinity))))
