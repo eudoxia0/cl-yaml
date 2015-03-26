@@ -62,3 +62,7 @@
     (is
      (equal data
             (list 1 2 3)))))
+
+(test parsing-errors
+  (signals yaml.error:parsing-error
+    (yaml:parse "[1,2,3")))

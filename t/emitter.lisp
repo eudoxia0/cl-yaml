@@ -47,3 +47,11 @@
    "[1, 2, 3]")
   ((vector 1 2 3)
    "[1, 2, 3]"))
+
+(test hash-tables
+  (let ((table (alexandria:alist-hash-table
+                (list (cons "a" 1)
+                      (cons "b" 2)))))
+    (is
+     (equal (yaml:emit-to-string table)
+            "{ b: 2, a: 1 }"))))
