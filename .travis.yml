@@ -21,8 +21,7 @@ script:
                  (lambda (c h)
                    (declare (ignore c h))
                    (uiop:quit -1)))'
-       -e '(coveralls:with-coveralls ()
-             (ql:quickload :cl-yaml-test))'
+       -e '(coveralls:with-coveralls (:exclude (list "t")))'
 
 notifications:
   email:
