@@ -66,3 +66,8 @@
 (test parsing-errors
   (signals yaml.error:parsing-error
     (yaml:parse "[1,2,3")))
+
+(test toplevel-parser
+  (is
+   (equal (yaml:parse (asdf:system-relative-pathname :cl-yaml #p"t/test.yaml"))
+          (list 1 2 3))))

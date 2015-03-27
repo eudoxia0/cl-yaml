@@ -55,3 +55,8 @@
     (is
      (equal (yaml:emit-to-string table)
             "{ b: 2, a: 1 }"))))
+
+(test toplevel-function
+  (is
+    (equal (yaml:emit-to-string 1)
+           "1")))
