@@ -59,4 +59,9 @@
 (test toplevel-function
   (is
     (equal (yaml:emit-to-string 1)
+           "1"))
+  (is
+    (equal (with-output-to-string (stream)
+             (yaml:emit 1 stream))
            "1")))
+
