@@ -1,6 +1,7 @@
 # cl-yaml
 
 [![Build Status](https://travis-ci.org/eudoxia0/cl-yaml.svg?branch=master)](https://travis-ci.org/eudoxia0/cl-yaml)
+[![Coverage Status](https://coveralls.io/repos/eudoxia0/cl-yaml/badge.svg?branch=master)](https://coveralls.io/r/eudoxia0/cl-yaml?branch=master)
 
 A YAML parser and emitter.
 
