@@ -63,11 +63,24 @@
      (equal data
             (list 1 2 3)))))
 
+(test hash-tables
+  (let ((data (yaml:parse "{ a: 1, b: 2}")))
+    (is
+     (equal (hash-table-count data)
+            2))
+    (is-false
+     (set-difference (alexandria:hash-table-keys data)
+                     (list "a" "b")
+                     :test #'equal))
+    (is-false
+     (set-difference (alexandria:hash-table-values data)
+                     (list 1 2)))))
+
 (test parsing-errors
   (signals yaml.error:parsing-error
     (yaml:parse "[1,2,3")))
 
-(test toplevel-parser
+(test parse-file
   (is
    (equal (yaml:parse (asdf:system-relative-pathname :cl-yaml #p"t/test.yaml"))
           (list 1 2 3))))
