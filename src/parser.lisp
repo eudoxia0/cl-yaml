@@ -46,11 +46,13 @@
                            (eql type :document-end-event))
                        (add-to-output (list type)))
                       ;; Alias and scalar event, push the type and data pair to
-                      ;; the output list
+                      ;; the output list. Disabled since they are not supported.
+                      #|
                       ((eql type :alias-event)
                        (add-to-output
                         (cons type
                               (libyaml.event:event-alias-data event))))
+                      |#
                       ((eql type :scalar-event)
                        (add-to-output
                         (cons type
@@ -68,9 +70,7 @@
                         (cons type
                               (libyaml.event:event-mapping-start-data event))))
                       ((eql type :mapping-end-event)
-                       (add-to-output (list type)))
-                      (t
-                       t))))
+                       (add-to-output (list type))))))
                 ;; Signal an error
                 (signal-reader-error parser))))))))
 
@@ -87,9 +87,12 @@
                  (append (first contexts)
                          con))))
         ;; Alias event
+        ;; Disabled since it's not supported
+        #|
         ((:alias-event &key anchor)
          (declare (ignore anchor))
          t)
+        |#
         ;; Scalar
         ((:scalar-event &key anchor tag value)
          (declare (ignore anchor tag))
