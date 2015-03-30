@@ -121,8 +121,7 @@
                           (alexandria:plist-hash-table con :test #'equal))))))
         ;; Do nothing
         ((t &rest rest)
-         (declare (ignore rest))
-         t)))
+         (declare (ignore rest)))))
     (first contexts)))
 
 ;;; The public interface
