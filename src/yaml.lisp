@@ -1,6 +1,7 @@
 (in-package :cl-user)
-(defpackage yaml
+(defpackage cl-yaml
   (:use :cl)
+  (:nicknames :yaml)
   (:export :parse
            :emit
            :emit-to-string)
