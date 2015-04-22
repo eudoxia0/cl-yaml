@@ -1,7 +1,8 @@
 (in-package :cl-user)
 (defpackage cl-yaml-test.spec
   (:use :cl :fiveam)
-  (:export :spec))
+  (:export :spec)
+  (:documentation "Run tests from the specification."))
 (in-package :cl-yaml-test.spec)
 
 (def-suite spec

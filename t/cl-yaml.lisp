@@ -1,6 +1,7 @@
 (in-package :cl-user)
 (defpackage cl-yaml-test
-  (:use :cl :fiveam))
+  (:use :cl :fiveam)
+  (:documentation "Run all test suites."))
 (in-package :cl-yaml-test)
 
 (run! 'cl-yaml-test.float:float)

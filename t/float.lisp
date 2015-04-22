@@ -1,7 +1,8 @@
 (in-package :cl-user)
 (defpackage cl-yaml-test.float
   (:use :cl :fiveam)
-  (:export :float))
+  (:export :float)
+  (:documentation "Test floating-point number support."))
 (in-package :cl-yaml-test.float)
 
 (def-suite float

@@ -3,7 +3,8 @@
   (:use :cl :fiveam)
   (:import-from :alexandria
                 :alist-hash-table)
-  (:export :parser))
+  (:export :parser)
+  (:documentation "Parser tests."))
 (in-package :cl-yaml-test.parser)
 
 (def-suite parser

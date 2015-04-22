@@ -1,7 +1,8 @@
 (in-package :cl-user)
 (defpackage cl-yaml-test.scalar
   (:use :cl :fiveam)
-  (:export :scalar))
+  (:export :scalar)
+  (:documentation "Scalar parsing tests."))
 (in-package :cl-yaml-test.scalar)
 
 ;;; Macros

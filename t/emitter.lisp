@@ -3,7 +3,8 @@
   (:use :cl :fiveam)
   (:import-from :alexandria
                 :alist-hash-table)
-  (:export :emitter))
+  (:export :emitter)
+  (:documentation "Emitter tests."))
 (in-package :cl-yaml-test.emitter)
 
 ;;; Macros

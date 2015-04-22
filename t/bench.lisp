@@ -1,7 +1,8 @@
 (in-package :cl-user)
 (defpackage cl-yaml-test.bench
   (:use :cl :fiveam)
-  (:export :bench))
+  (:export :bench)
+  (:documentation "Benchmarks."))
 (in-package :cl-yaml-test.bench)
 
 ;;; Utilities
@@ -9,8 +10,9 @@
 (defmacro bench (string)
   `(finishes
      (format t "~%Benchmarking: ~S" ,string)
-     (benchmark:with-timing 1000
-       (yaml:parse ,string))))
+     (time
+      (benchmark:with-timing (1000)
+        (yaml:parse ,string)))))
 
 
 ;;; Tests
