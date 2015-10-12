@@ -1,27 +1,43 @@
 language: common-lisp
 
 env:
+  global:
+    - PATH=~/.roswell/bin:$PATH
+    - ROSWELL_BRANCH=master
+    - ROSWELL_INSTALL_DIR=$HOME/.roswell
+    - COVERAGE_EXCLUDE=t
   matrix:
-    - LISP=sbcl COVERALLS=true
-    - LISP=ccl
+    - LISP=sbcl-bin COVERALLS=true
+    - LISP=ccl-bin
+    - LISP=clisp
 
 install:
-  # Install cl-travis
-  - curl https://raw.githubusercontent.com/luismbo/cl-travis/master/install.sh | bash
+  # Roswell & coveralls
+  - curl -L https://raw.githubusercontent.com/snmsts/roswell/$ROSWELL_BRANCH/scripts/install-for-ci.sh | sh
+  - git clone https://github.com/fukamachi/cl-coveralls ~/lisp/cl-coveralls
   # Clone cl-libyaml
   - git clone https://github.com/eudoxia0/cl-libyaml.git ~/lisp/cl-libyaml
-  # coveralls.io
-  - git clone https://github.com/fukamachi/cl-coveralls ~/lisp/cl-coveralls
+
+cache:
+  directories:
+    - $HOME/.roswell
+    - $HOME/.config/common-lisp
+
+before_script:
+  - ros --version
+  - ros config
 
 script:
-  - cl -l fiveam -l cl-coveralls
-       -e '(setf fiveam:*debug-on-error* t)'
-       -e '(setf *debugger-hook*
-                 (lambda (c h)
-                   (declare (ignore c h))
-                   (uiop:quit -1)))'
+  - ros -e '(ql:quickload (list :fiveam :cl-coveralls))'
+        -e '(setf fiveam:*debug-on-error* t
+                  fiveam:*debug-on-failure* t)'
+        -e '(setf *debugger-hook*
+                  (lambda (c h)
+                    (declare (ignore c h))
+                    (uiop:quit -1)))'
        -e '(coveralls:with-coveralls (:exclude (list "t" "src/error.lisp"))
-             (ql:quickload :cl-yaml-test))'
+             (ql:quickload :cl-yaml-test)
+             (cl-yaml-test:run-tests))'
 
 notifications:
   email:
