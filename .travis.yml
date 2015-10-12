@@ -29,12 +29,15 @@ before_script:
   - ros config
 
 script:
-  - ros -e '(ql:quickload (list :fiveam :cl-coveralls))'
+  - ros -e '(ql:quickload (list :fiveam :cl-coveralls :cl-yaml-test))'
         -e '(setf fiveam:*debug-on-error* t
                   fiveam:*debug-on-failure* t)'
-       -e '(coveralls:with-coveralls (:exclude (list "t" "src/error.lisp"))
-             (ql:quickload :cl-yaml-test)
-             (cl-yaml-test:run-tests))'
+        -e '(setf *debugger-hook*
+                  (lambda (c h)
+                    (declare (ignore c h))
+                    (uiop:quit -1)))'
+        -e '(coveralls:with-coveralls (:exclude (list "t" "src/error.lisp"))
+              (cl-yaml-test:run-tests))'
 
 notifications:
   email:
