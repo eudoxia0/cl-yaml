@@ -41,6 +41,12 @@
   ("6.62606957e-34"
    6.62607e-34))
 
+(define-test-cases (strings)
+  ("test" "test")
+  ("\"test\"" "test")
+  ("€" "€")
+  ("€1234" "€1234"))
+
 (define-test-cases (lists)
   ("[a, b, c]"
    (list "a" "b" "c"))
