@@ -3,7 +3,8 @@
 [![Build Status](https://travis-ci.org/eudoxia0/cl-yaml.svg?branch=master)](https://travis-ci.org/eudoxia0/cl-yaml)
 [![Coverage Status](https://coveralls.io/repos/eudoxia0/cl-yaml/badge.svg?branch=master)](https://coveralls.io/r/eudoxia0/cl-yaml?branch=master)
 
-A YAML parser and emitter.
+A YAML parser and emitter built on top of [libyaml][libyaml]. Uses the
+[cl-libyaml][cl-libyaml] library.
 
 # Usage
 
@@ -92,6 +93,8 @@ values. The strategy can be customized by setting the value of
    Lisp, NaN and infinity can be represented.
 
 [core-schema]: http://www.yaml.org/spec/1.2/spec.html#id2804923
+[libyaml]: http://pyyaml.org/wiki/LibYAML
+[cl-libyaml]: https://github.com/eudoxia0/cl-libyaml
 
 # License
 
