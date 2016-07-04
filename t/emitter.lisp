@@ -55,7 +55,7 @@
                       (cons "b" 2)))))
     (is
      (equal (yaml:emit-to-string table)
-            "{ b: 2, a: 1 }"))))
+            "{ \"b\": 2, \"a\": 1 }"))))
 
 (test toplevel-function
   (is
@@ -65,4 +65,3 @@
     (equal (with-output-to-string (stream)
              (yaml:emit 1 stream))
            "1")))
-
