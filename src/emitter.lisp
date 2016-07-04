@@ -30,7 +30,8 @@
 
 (defmethod encode ((string string) stream)
   "Encode a string."
-  (write-string string stream))
+  ;; (write-string string stream)
+  (format stream "~s" string))
 
 (defmethod encode ((list list) stream)
   "Encode a list."
