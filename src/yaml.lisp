@@ -3,8 +3,9 @@
   (:use :cl)
   (:nicknames :yaml)
   (:export :parse
-           :emit
-           :emit-to-string)
+           ;:emit
+           ;:emit-to-string
+	   )
   (:documentation "The main YAML interface."))
 (in-package :yaml)
 
@@ -22,8 +23,8 @@
   (parse (uiop:read-file-string input)
          :multi-document-p multi-document-p))
 
-(defun emit (value stream)
-  (yaml.emitter:emit value stream))
+;; (defun emit (value stream)
+;;   (yaml.emitter:emit value stream))
 
-(defun emit-to-string (value)
-  (yaml.emitter:emit-to-string value))
+;; (defun emit-to-string (value)
+;;   (yaml.emitter:emit-to-string value))
