@@ -2,10 +2,21 @@
 (defpackage cl-yaml
   (:use :cl)
   (:nicknames :yaml)
+  (:import-from :yaml.parser
+                :register-scalar-converter
+                :register-sequence-converter
+                :register-mapping-converter)
+  (:import-from :yaml.emitter
+                :emit-object
+                :print-scalar)
   (:export :parse
-           ;:emit
-           ;:emit-to-string
-	   )
+           :emit
+           :emit-to-string
+           :register-scalar-converter
+           :register-sequence-converter
+           :register-mapping-converter
+           :emit-object
+           :print-scalar)
   (:documentation "The main YAML interface."))
 (in-package :yaml)
 
@@ -23,8 +34,8 @@
   (parse (uiop:read-file-string input)
          :multi-document-p multi-document-p))
 
-;; (defun emit (value stream)
-;;   (yaml.emitter:emit value stream))
+(defun emit (value stream)
+  (yaml.emitter:emit value stream))
 
-;; (defun emit-to-string (value)
-;;   (yaml.emitter:emit-to-string value))
+(defun emit-to-string (value)
+  (yaml.emitter:emit-to-string value))
