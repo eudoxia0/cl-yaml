@@ -2,51 +2,51 @@
 (defpackage yaml.emitter
   (:use :cl)
   (:import-from :cffi
-		:foreign-free
-		:null-pointer)
+                :foreign-free
+                :null-pointer)
   (:import-from :libyaml.emitter
-		:allocate-emitter
-		:emitter-initialize
-		:emitter-delete
-		:set-output
-		:stream-start-event-initialize
-		:stream-end-event-initialize
-		:document-start-event-initialize
-		:document-end-event-initialize
-		:scalar-event-initialize
-		:sequence-start-event-initialize
-		:sequence-end-event-initialize
-		:mapping-start-event-initialize
-		:mapping-end-event-initialize)
+                :allocate-emitter
+                :emitter-initialize
+                :emitter-delete
+                :set-output
+                :stream-start-event-initialize
+                :stream-end-event-initialize
+                :document-start-event-initialize
+                :document-end-event-initialize
+                :scalar-event-initialize
+                :sequence-start-event-initialize
+                :sequence-end-event-initialize
+                :mapping-start-event-initialize
+                :mapping-end-event-initialize)
   (:import-from :libyaml.event
-		:allocate-event
-		:event-delete)
+                :allocate-event
+                :event-delete)
   (:import-from :libyaml.write-handler
-		:*write-handler-callback*
-		:*write-handler-stream*)
+                :*write-handler-callback*
+                :*write-handler-stream*)
   (:export ;; Original interface
-	   :emit
-	   :emit-to-string
-	   :encode
-	   ;; libyaml based interface
-	   :stream-start-event
-	   :stream-end-event
-	   :document-start-event
-	   :document-end-event
-	   :scalar-event
-	   :sequence-start-event
-	   :sequence-end-event
-	   :mapping-start-event
-	   :mapping-end-event
-	   :emit-stream
-	   :emit-document
-	   :emit-sequence
-	   :emit-mapping
-	   :emit-scalar
+           :emit
+           :emit-to-string
+           :encode
+           ;; libyaml based interface
+           :stream-start-event
+           :stream-end-event
+           :document-start-event
+           :document-end-event
+           :scalar-event
+           :sequence-start-event
+           :sequence-end-event
+           :mapping-start-event
+           :mapping-end-event
+           :emit-stream
+           :emit-document
+           :emit-sequence
+           :emit-mapping
+           :emit-scalar
            :emit-object
            :print-scalar
-	   :with-emitter-to-stream
-	   :with-emitter-to-string)
+           :with-emitter-to-stream
+           :with-emitter-to-string)
   (:documentation "The YAML emitter."))
 (in-package :yaml.emitter)
 
@@ -121,42 +121,42 @@
   (stream-end-event-initialize event))
 
 (defun document-start-event (event &key (version-directive (null-pointer))
-				     (tag-directive-start (null-pointer))
-				     (tag-directive-end (null-pointer))
-				     (implicit nil))
+                                     (tag-directive-start (null-pointer))
+                                     (tag-directive-end (null-pointer))
+                                     (implicit nil))
   (document-start-event-initialize event version-directive
-				   tag-directive-start
-				   tag-directive-end
-				   implicit))
+                                   tag-directive-start
+                                   tag-directive-end
+                                   implicit))
 
 (defun document-end-event (event &key (implicit nil))
   (document-end-event-initialize event implicit))
 
 (defun sequence-start-event (event &key (anchor (null-pointer))
-				     (tag (null-pointer))
-				     (implicit nil)
-				     (style :any-sequence-style))
+                                     (tag (null-pointer))
+                                     (implicit nil)
+                                     (style :any-sequence-style))
   (sequence-start-event-initialize event anchor tag implicit style))
 
 (defun sequence-end-event (event)
   (sequence-end-event-initialize event))
 
 (defun mapping-start-event (event &key (anchor (null-pointer))
-				    (tag (null-pointer))
-				    (implicit nil)
-				    (style :any-mapping-style))
+                                    (tag (null-pointer))
+                                    (implicit nil)
+                                    (style :any-mapping-style))
   (mapping-start-event-initialize event anchor tag implicit style))
 
 (defun mapping-end-event (event)
   (mapping-end-event-initialize event))
 
 (defun scalar-event (event value length &key (anchor (null-pointer))
-					  (tag (null-pointer))
-					  (plain-implicit t)
-					  (quoted-implicit t)
-					  (style :plain-scalar-style))
+                                          (tag (null-pointer))
+                                          (plain-implicit t)
+                                          (quoted-implicit t)
+                                          (style :plain-scalar-style))
   (scalar-event-initialize event anchor tag value length
-			   plain-implicit quoted-implicit style))
+                           plain-implicit quoted-implicit style))
 
 ;;; Emitter macros and output functions
 
@@ -169,34 +169,34 @@
 
 (defmacro with-emitter-to-stream ((emitter-var output-stream) &rest body)
   (let ((foreign-emitter (gensym "EMITTER"))
-	(foreign-event (gensym "EVENT")))
+        (foreign-event (gensym "EVENT")))
     `(let* ((,foreign-emitter (allocate-emitter))
-	    (,foreign-event (allocate-event))
-	    (,emitter-var (cons ,foreign-emitter ,foreign-event))
-	    (*write-handler-stream* ,output-stream))
+            (,foreign-event (allocate-event))
+            (,emitter-var (cons ,foreign-emitter ,foreign-event))
+            (*write-handler-stream* ,output-stream))
       (unwind-protect
-	   (progn
-	     (emitter-initialize ,foreign-emitter)
-	     (set-output ,foreign-emitter *write-handler-callback* (null-pointer))
-	     ,@body)
-	(libyaml.event:event-delete ,foreign-event)
-	(libyaml.emitter:emitter-delete ,foreign-emitter)
-	(foreign-free ,foreign-event)
-	(foreign-free ,foreign-emitter)))))
+           (progn
+             (emitter-initialize ,foreign-emitter)
+             (set-output ,foreign-emitter *write-handler-callback* (null-pointer))
+             ,@body)
+        (libyaml.event:event-delete ,foreign-event)
+        (libyaml.emitter:emitter-delete ,foreign-emitter)
+        (foreign-free ,foreign-event)
+        (foreign-free ,foreign-emitter)))))
 
 (defmacro with-emitter-to-string ((emitter-var) &rest body)
   (let ((str (gensym "STR")))
     `(with-output-to-string (,str)
        (with-emitter-to-stream (,emitter-var ,str)
-	 ,@body))))
+         ,@body))))
 
 (defmacro emit-stream ((emitter &key (encoding :utf8-encoding)) &body body)
   (let ((emitter-value (gensym "EMITTER"))
-	(foreign-emitter (gensym "FOREIGN-EMITTER"))
-	(foreign-event (gensym "FOREIGN-EVENT")))
+        (foreign-emitter (gensym "FOREIGN-EMITTER"))
+        (foreign-event (gensym "FOREIGN-EVENT")))
     `(let* ((,emitter-value ,emitter)
-	    (,foreign-emitter (foreign-emitter ,emitter-value))
-	    (,foreign-event (foreign-event ,emitter-value)))
+            (,foreign-emitter (foreign-emitter ,emitter-value))
+            (,foreign-event (foreign-event ,emitter-value)))
        (stream-start-event ,foreign-event :encoding ,encoding)
        (libyaml.emitter:emit ,foreign-emitter ,foreign-event)
        ,@body
@@ -204,18 +204,18 @@
        (libyaml.emitter:emit ,foreign-emitter ,foreign-event))))
 
 (defmacro emit-document ((emitter &rest rest
-				  &key version-directive
-				  tag-directive-start 
-				  tag-directive-end
-				  (implicit nil)) &body body)
+                                  &key version-directive
+                                  tag-directive-start 
+                                  tag-directive-end
+                                  (implicit nil)) &body body)
   (declare (ignorable version-directive tag-directive-start
-		      tag-directive-end implicit))
+                      tag-directive-end implicit))
   (let ((emitter-value (gensym "EMITTER"))
-	(foreign-emitter (gensym "FOREIGN-EMITTER"))
-	(foreign-event (gensym "FOREIGN-EVENT")))
+        (foreign-emitter (gensym "FOREIGN-EMITTER"))
+        (foreign-event (gensym "FOREIGN-EVENT")))
     `(let* ((,emitter-value ,emitter)
-	    (,foreign-emitter (foreign-emitter ,emitter-value))
-	    (,foreign-event (foreign-event ,emitter-value)))
+            (,foreign-emitter (foreign-emitter ,emitter-value))
+            (,foreign-event (foreign-event ,emitter-value)))
        (apply #'document-start-event ,foreign-event (list ,@rest))
        (libyaml.emitter:emit ,foreign-emitter ,foreign-event)
        ,@body
@@ -223,14 +223,14 @@
        (libyaml.emitter:emit ,foreign-emitter ,foreign-event))))
 
 (defmacro emit-mapping ((emitter &rest rest &key anchor tag implicit style)
-			&body body)
+                        &body body)
   (declare (ignorable anchor tag implicit style))
   (let ((emitter-value (gensym "EMITTER"))
-	(foreign-emitter (gensym "FOREIGN-EMITTER"))
-	(foreign-event (gensym "FOREIGN-EVENT")))
+        (foreign-emitter (gensym "FOREIGN-EMITTER"))
+        (foreign-event (gensym "FOREIGN-EVENT")))
     `(let* ((,emitter-value ,emitter)
-	    (,foreign-emitter (foreign-emitter ,emitter-value))
-	    (,foreign-event (foreign-event ,emitter-value)))
+            (,foreign-emitter (foreign-emitter ,emitter-value))
+            (,foreign-event (foreign-event ,emitter-value)))
        (apply #'mapping-start-event ,foreign-event (list ,@rest))
        (libyaml.emitter:emit ,foreign-emitter ,foreign-event)
        ,@body
@@ -238,14 +238,14 @@
        (libyaml.emitter:emit ,foreign-emitter ,foreign-event))))
 
 (defmacro emit-sequence ((emitter &rest rest &key anchor tag implicit style)
-			 &body body)
+                         &body body)
   (declare (ignorable anchor tag implicit style))
   (let ((emitter-value (gensym "EMITTER"))
-	(foreign-emitter (gensym "FOREIGN-EMITTER"))
-	(foreign-event (gensym "FOREIGN-EVENT")))
+        (foreign-emitter (gensym "FOREIGN-EMITTER"))
+        (foreign-event (gensym "FOREIGN-EVENT")))
     `(let* ((,emitter-value ,emitter)
-	    (,foreign-emitter (foreign-emitter ,emitter-value))
-	    (,foreign-event (foreign-event ,emitter-value)))
+            (,foreign-emitter (foreign-emitter ,emitter-value))
+            (,foreign-event (foreign-event ,emitter-value)))
        (apply #'sequence-start-event ,foreign-event (list ,@rest))
        (libyaml.emitter:emit ,foreign-emitter ,foreign-event)
        ,@body
@@ -253,13 +253,13 @@
        (libyaml.emitter:emit ,foreign-emitter ,foreign-event))))
 
 (defun emit-scalar (emitter value &rest rest &key anchor tag
-					       plain-implicit
-					       quoted-implicit
-					       style)
+                                               plain-implicit
+                                               quoted-implicit
+                                               style)
   (declare (ignorable anchor tag plain-implicit quoted-implicit style))
   (let ((printed-value (print-scalar value)))
     (apply #'scalar-event (foreign-event emitter)
-	   printed-value (length printed-value) rest)
+           printed-value (length printed-value) rest)
     (libyaml.emitter:emit (foreign-emitter emitter) (foreign-event emitter))))
 
 (defgeneric print-scalar (scalar)
