@@ -10,5 +10,7 @@
   (run! 'cl-yaml-test.scalar:scalar)
   (run! 'cl-yaml-test.parser:parser)
   (run! 'cl-yaml-test.emitter:emitter)
+  (run! 'cl-yaml-test.emitter2:emitter2)
+  (run! 'cl-yaml-test.round-trip:round-trip)
   (run! 'cl-yaml-test.spec:spec)
   (run! 'cl-yaml-test.bench:bench))

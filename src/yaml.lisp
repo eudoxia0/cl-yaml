@@ -2,9 +2,21 @@
 (defpackage cl-yaml
   (:use :cl)
   (:nicknames :yaml)
+  (:import-from :yaml.parser
+                :register-scalar-converter
+                :register-sequence-converter
+                :register-mapping-converter)
+  (:import-from :yaml.emitter
+                :emit-object
+                :print-scalar)
   (:export :parse
            :emit
-           :emit-to-string)
+           :emit-to-string
+           :register-scalar-converter
+           :register-sequence-converter
+           :register-mapping-converter
+           :emit-object
+           :print-scalar)
   (:documentation "The main YAML interface."))
 (in-package :yaml)
 

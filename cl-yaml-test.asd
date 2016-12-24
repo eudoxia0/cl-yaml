@@ -16,6 +16,8 @@
                  (:file "scalar")
                  (:file "parser")
                  (:file "emitter")
+                 (:file "emitter2")
+                 (:file "round-trip")
                  (:file "spec")
                  (:file "bench")
                  (:file "cl-yaml")))))

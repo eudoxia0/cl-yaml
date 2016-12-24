@@ -15,6 +15,9 @@
 
 ;;; Regular expressions or lists of names
 
+(defparameter +quoted-scalar-styles+
+  (list :single-quoted-scalar-style :double-quoted-scalar-style))
+
 (defparameter +null-names+
   (list "null" "Null" "NULL" "~"))
 
@@ -48,9 +51,12 @@
 
 ;;; The actual parser
 
-(defun parse-scalar (string)
+(defun parse-scalar (string &optional (style :plain-scalar-style))
   "Parse a YAML scalar string into a Lisp scalar value."
   (cond
+    ;; Quoted string
+    ((member style +quoted-scalar-styles+)
+     string)
     ;; Null
     ((member string +null-names+ :test #'equal)
      +null+)

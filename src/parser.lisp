@@ -6,9 +6,43 @@
   (:import-from :libyaml.macros
                 :with-parser
                 :with-event)
-  (:export :parse-string)
+  (:export :parse-string
+	   :register-scalar-converter
+	   :register-sequence-converter
+	   :register-mapping-converter)
   (:documentation "The YAML parser."))
 (in-package :yaml.parser)
+
+(defvar +scalar-converters+ (make-hash-table :test #'equalp))
+(defvar +sequence-converters+ (make-hash-table :test #'equalp))
+(defvar +mapping-converters+ (make-hash-table :test #'equalp))
+
+(defun scalar-converter (tag)
+  (gethash tag +scalar-converters+))
+
+(defun convert-scalar (string tag &optional (style :plain-scalar-stype))
+  (let ((converter (scalar-converter tag)))
+    (if converter
+	(funcall converter string)
+	(yaml.scalar:parse-scalar string style))))
+
+(defun sequence-converter (tag)
+  (gethash tag +sequence-converters+))
+
+(defun convert-sequence (list tag)
+  (let ((converter (sequence-converter tag)))
+    (if converter
+	(funcall converter list)
+	list)))
+
+(defun mapping-converter (tag)
+  (gethash tag +mapping-converters+))
+
+(defun convert-mapping (hashtable tag)
+  (let ((converter (mapping-converter tag)))
+    (if converter
+	(funcall converter hashtable)
+	hashtable)))
 
 ;;; The parser
 
@@ -94,37 +128,47 @@
          t)
         |#
         ;; Scalar
-        ((:scalar-event &key anchor tag value)
-         (declare (ignore anchor tag))
+        ((:scalar-event &key anchor tag value length plain-implicit quoted-implicit style)
+         (declare (ignore anchor length plain-implicit quoted-implicit))
          (setf (first contexts)
                (append (first contexts)
-                       (list (yaml.scalar:parse-scalar value)))))
+                       (list (convert-scalar value tag style)))))
         ;; Sequence start event
-        ((:sequence-start-event &key anchor tag)
-         (declare (ignore anchor tag))
-         (push (list) contexts))
+        ((:sequence-start-event &key anchor tag implicit style)
+         (declare (ignore anchor implicit style))
+         (push (list tag) contexts))
         ;; Mapping start event
-        ((:mapping-start-event &key anchor tag)
-         (declare (ignore anchor tag))
-         (push (list) contexts))
+        ((:mapping-start-event &key anchor tag implicit style)
+         (declare (ignore anchor implicit style))
+         (push (list tag) contexts))
         ;; End events
         ((:sequence-end-event)
-         (let ((con (pop contexts)))
+         (destructuring-bind (tag &rest seq) (pop contexts)
            (setf (first contexts)
                  (append (first contexts)
-                         (list con)))))
+                         (list (convert-sequence seq tag))))))
         ((:mapping-end-event)
-         (let ((con (pop contexts)))
+         (destructuring-bind (tag &rest plist) (pop contexts)
            (setf (first contexts)
                  (append (first contexts)
-                         (list
-                          (alexandria:plist-hash-table con :test #'equal))))))
+                         (list (convert-mapping
+				(alexandria:plist-hash-table plist :test #'equalp)
+				tag))))))
         ;; Do nothing
         ((t &rest rest)
          (declare (ignore rest)))))
     (first contexts)))
 
 ;;; The public interface
+
+(defun register-scalar-converter (tag converter)
+  (setf (gethash tag +scalar-converters+) converter))
+
+(defun register-sequence-converter (tag converter)
+  (setf (gethash tag +sequence-converters+) converter))
+
+(defun register-mapping-converter (tag converter)
+  (setf (gethash tag +mapping-converters+) converter))
 
 (defun parse-string (yaml-string)
   (parse-tokens (parse-yaml yaml-string)))
