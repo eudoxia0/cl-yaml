@@ -13,9 +13,9 @@
   (:documentation "The YAML parser."))
 (in-package :yaml.parser)
 
-(defvar +scalar-converters+ (make-hash-table :test #'equalp))
-(defvar +sequence-converters+ (make-hash-table :test #'equalp))
-(defvar +mapping-converters+ (make-hash-table :test #'equalp))
+(defvar +scalar-converters+ (make-hash-table :test #'equal))
+(defvar +sequence-converters+ (make-hash-table :test #'equal))
+(defvar +mapping-converters+ (make-hash-table :test #'equal))
 
 (defun scalar-converter (tag)
   (gethash tag +scalar-converters+))
