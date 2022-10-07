@@ -165,7 +165,7 @@
     \"
   "
  (with-emitter-to-string
-  (em stream)
+  (em)
   (emit-stream
    (em)
    (emit-document
