@@ -112,6 +112,67 @@
   (with-output-to-string (stream)
 (emit value stream)))
 
+(defun emit-pretty-as-document (value stream)
+  "
+  Emit a value using \"pretty printing\" settings
+  within the context of its own document.
+
+  Example:
+
+    (emit-pretty-as-document
+      (alexandria:plist-hash-table '(\"a\" t \"b\" 2.0 \"mordac\" (c d e f)))
+      stream)
+    ; The following will be printed to the stream:
+
+        ---
+        a: true
+        b: 2.0
+        mordac:
+        - C
+        - D
+        - E
+        - F
+        ...
+  "
+ (with-emitter-to-stream
+  (em stream)
+  (emit-stream
+   (em)
+   (emit-document
+    (em)
+    (emit-object em value)))))
+
+(defun emit-pretty-as-document-to-string (value)
+  "
+  Emit a value using \"pretty printing\" settings
+  within the context of its own document.
+
+  Example:
+
+    (emit-pretty-as-document
+      (alexandria:plist-hash-table '(\"a\" t \"b\" 2.0 \"mordac\" (c d e f)))
+      stream)
+    ; =>
+    \"---
+    a: true
+    b: 2.0
+    mordac:
+    - C
+    - D
+    - E
+    - F
+    ...
+    \"
+  "
+ (with-emitter-to-string
+  (em stream)
+  (emit-stream
+   (em)
+   (emit-document
+    (em)
+    (emit-object em value)))))
+
+
 ;;; Wrappers around cl-libyaml event interface with defaults and keyword args
 
 (defun stream-start-event (event &key (encoding :utf8-encoding))
@@ -302,4 +363,21 @@
 
 (defmethod emit-object (emitter (obj float))
   (emit-scalar emitter obj))
+
+(defmethod emit-object (emitter (obj cons))
+  (emit-sequence (emitter)
+    (loop for x in obj do
+        (emit-object emitter x))))
+
+(defmethod emit-object (emitter (obj hash-table))
+  (emit-mapping (emitter)
+    (with-hash-table-iterator (h-iter obj)
+    (loop
+        (multiple-value-bind (entry-p key value)
+          (h-iter)
+            (if entry-p
+                (progn
+                (emit-object emitter key)
+                (emit-object emitter value))
+                (return)))))))
 

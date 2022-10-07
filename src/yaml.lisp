@@ -39,3 +39,12 @@
 
 (defun emit-to-string (value)
   (yaml.emitter:emit-to-string value))
+
+(defun emit-pretty-as-document
+  (value stream)
+  (yaml.emitter:emit-pretty-as-document value stream))
+
+(defun emit-pretty-as-document-to-string
+  (value stream)
+  (yaml.emitter:emit-pretty-as-document-to-string value))
+
