@@ -12,6 +12,8 @@
   (:export :parse
            :emit
            :emit-to-string
+           :emit-pretty-as-document
+           :emit-pretty-as-document-to-string
            :register-scalar-converter
            :register-sequence-converter
            :register-mapping-converter
