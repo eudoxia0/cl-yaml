@@ -44,6 +44,8 @@
            :emit-mapping
            :emit-scalar
            :emit-object
+           :emit-pretty-as-document
+           :emit-pretty-as-document-to-string
            :print-scalar
            :with-emitter-to-stream
            :with-emitter-to-string)
