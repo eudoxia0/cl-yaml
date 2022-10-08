@@ -122,14 +122,14 @@
   Example:
 
     (emit-pretty-as-document
-      (alexandria:plist-hash-table '(\"a\" t \"b\" 2.0 \"mordac\" (c d e f)))
+      (alexandria:plist-hash-table '(\"a\" t \"b\" 2.0 \"moreducks\" (c d e f)))
       stream)
     ; The following will be printed to the stream:
 
         ---
         a: true
         b: 2.0
-        mordac:
+        moreducks:
         - C
         - D
         - E
@@ -152,13 +152,13 @@
   Example:
 
     (emit-pretty-as-document
-      (alexandria:plist-hash-table '(\"a\" t \"b\" 2.0 \"mordac\" (c d e f)))
+      (alexandria:plist-hash-table '(\"a\" t \"b\" 2.0 \"moreducks\" (c d e f)))
       stream)
     ; =>
     \"---
     a: true
     b: 2.0
-    mordac:
+    moreducks:
     - C
     - D
     - E
@@ -382,4 +382,3 @@
                 (emit-object emitter key)
                 (emit-object emitter value))
                 (return)))))))
-

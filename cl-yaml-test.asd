@@ -6,7 +6,7 @@
                :fiveam
                :alexandria
                :yason
-               :generic-comparability
+               :cdr-8
                :cl-fad
                :trivial-benchmark)
   :components ((:module "t"
@@ -17,6 +17,7 @@
                  (:file "parser")
                  (:file "emitter")
                  (:file "emitter2")
+                 (:file "emitter-pretty")
                  (:file "round-trip")
                  (:file "spec")
                  (:file "bench")

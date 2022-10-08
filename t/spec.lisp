@@ -25,4 +25,4 @@
           (let ((data (yaml:parse file))
                 (json-data (parse-corresponding-file file)))
             (is-true
-             (generic-comparability:equals data json-data))))))))
+             (cdr-8:equals data json-data))))))))
