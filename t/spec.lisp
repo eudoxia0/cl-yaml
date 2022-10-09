@@ -2,6 +2,7 @@
 (defpackage cl-yaml-test.spec
   (:use :cl :fiveam)
   (:export :spec)
+  (:import-from :generic-comparability)
   (:documentation "Run tests from the specification."))
 (in-package :cl-yaml-test.spec)
 
@@ -25,4 +26,4 @@
           (let ((data (yaml:parse file))
                 (json-data (parse-corresponding-file file)))
             (is-true
-             (cdr-8:equals data json-data))))))))
+             (generic-comparability:equals data json-data))))))))

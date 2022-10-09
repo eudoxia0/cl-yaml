@@ -17,8 +17,10 @@
                  lines)))
 
 (test booleans
-      (is (equal (yaml:emit-pretty-as-document-to-string
-                   t)
+      (is (equal (yaml:with-emitter-to-string
+                   (em)
+                   (yaml:emit-pretty-as-document
+                     em t))
                  (format
                    nil
                    (concatenate
@@ -27,8 +29,10 @@
                      "...~&")
                    "true"
                    )))
-      (is (equal (yaml:emit-pretty-as-document-to-string
-                   nil)
+      (is (equal (yaml:with-emitter-to-string
+                   (em)
+                   (yaml:emit-pretty-as-document
+                     em nil))
                  (format
                    nil
                    (concatenate
@@ -37,10 +41,20 @@
                      "...~&")
                    "false"
                    ))))
+(test inverses
+      (loop for a in '(t nil "a" "b" 12.5 5) do
+      (is (equal
+            (yaml:parse (yaml:with-emitter-to-string
+                          (em)
+                          (yaml:emit-pretty-as-document em "a")))
+            "a"))))
+
 (test scalar-values
       (loop for a in '("a" "b" 12.5 5) do
-      (is (equal (yaml:emit-pretty-as-document-to-string
-                   a)
+      (is (equal (yaml:with-emitter-to-string
+                   (em)
+                   (yaml:emit-pretty-as-document
+                   em a))
                  (format
                    nil
                    (concatenate
@@ -49,16 +63,14 @@
                      "...~&")
                    a
                    )))))
-(test inverses
-      (loop for a in '(t nil "a" "b" 12.5 5) do
-      (is (equal
-            (cl-yaml:parse (cl-yaml:emit-pretty-as-document-to-string "a"))
-            "a"))))
 
 (test doc-example
       (is (equal
-            (cl-yaml:emit-pretty-as-document-to-string
-              (alexandria:plist-hash-table '("a" t "b" 2.0 "moreducks" (c d e f))))
+            (yaml:with-emitter-to-string
+              (em)
+              (yaml:emit-pretty-as-document
+                em
+                (alexandria:plist-hash-table '("a" t "b" 2.0 "moreducks" (c d e f)))))
             (join-lines
               '(
                 "---"

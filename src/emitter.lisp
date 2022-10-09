@@ -44,11 +44,10 @@
            :emit-mapping
            :emit-scalar
            :emit-object
-           :emit-pretty-as-document
-           :emit-pretty-as-document-to-string
-           :print-scalar
            :with-emitter-to-stream
-           :with-emitter-to-string)
+           :with-emitter-to-string
+           :emit-pretty-as-document
+           :print-scalar)
   (:documentation "The YAML emitter."))
 (in-package :yaml.emitter)
 
@@ -114,39 +113,7 @@
   (with-output-to-string (stream)
 (emit value stream)))
 
-(defun emit-pretty-as-document (value stream)
-  "
-  Emit a value using \"pretty printing\" settings
-  within the context of its own document.
-
-  Example:
-
-    (emit-pretty-as-document
-      (alexandria:plist-hash-table '(\"a\" t \"b\" 2.0 \"moreducks\" (c d e f)))
-      stream)
-    ; The following will be printed to the stream:
-
-        ---
-        a: true
-        b: 2.0
-        moreducks:
-        - C
-        - D
-        - E
-        - F
-        ...
-  "
-  ; If I don't use absolute paths on these macros, this function doesn't work
-  ; in other packages :( Oh, well.
- (yaml.emitter:with-emitter-to-stream
-  (em stream)
-  (yaml.emitter:emit-stream
-   (em)
-   (yaml.emitter:emit-document
-    (em)
-    (yaml.emitter:emit-object em value)))))
-
-(defun emit-pretty-as-document-to-string (value)
+(defun emit-pretty-as-document (em value)
   "
   Emit a value using \"pretty printing\" settings
   within the context of its own document.
@@ -168,15 +135,11 @@
     ...
     \"
   "
-  ; If I don't use absolute paths on these macros, this function doesn't work
-  ; in other packages :( Oh, well.
- (yaml.emitter:with-emitter-to-string
-  (em)
   (yaml.emitter:emit-stream
    (em)
    (yaml.emitter:emit-document
     (em)
-    (yaml.emitter:emit-object em value)))))
+    (yaml.emitter:emit-object em value))))
 
 
 ;;; Wrappers around cl-libyaml event interface with defaults and keyword args

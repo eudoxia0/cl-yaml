@@ -6,7 +6,7 @@
                :fiveam
                :alexandria
                :yason
-               :cdr-8
+               :generic-comparability
                :cl-fad
                :trivial-benchmark)
   :components ((:module "t"

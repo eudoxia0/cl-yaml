@@ -8,6 +8,8 @@
                 :register-mapping-converter)
   (:import-from :yaml.emitter
                 :emit-object
+                :with-emitter-to-stream
+                :with-emitter-to-string
                 :print-scalar)
   (:export :parse
            :emit
@@ -17,6 +19,8 @@
            :register-scalar-converter
            :register-sequence-converter
            :register-mapping-converter
+           :with-emitter-to-stream
+           :with-emitter-to-string
            :emit-object
            :print-scalar)
   (:documentation "The main YAML interface."))
@@ -43,10 +47,5 @@
   (yaml.emitter:emit-to-string value))
 
 (defun emit-pretty-as-document
-  (value stream)
-  (yaml.emitter:emit-pretty-as-document value stream))
-
-(defun emit-pretty-as-document-to-string
-  (value)
-  (yaml.emitter:emit-pretty-as-document-to-string value))
-
+  (em value)
+  (yaml.emitter:emit-pretty-as-document em value))
