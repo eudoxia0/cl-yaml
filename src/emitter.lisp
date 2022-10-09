@@ -136,13 +136,15 @@
         - F
         ...
   "
- (with-emitter-to-stream
+  ; If I don't use absolute paths on these macros, this function doesn't work
+  ; in other packages :( Oh, well.
+ (yaml.emitter:with-emitter-to-stream
   (em stream)
-  (emit-stream
+  (yaml.emitter:emit-stream
    (em)
-   (emit-document
+   (yaml.emitter:emit-document
     (em)
-    (emit-object em value)))))
+    (yaml.emitter:emit-object em value)))))
 
 (defun emit-pretty-as-document-to-string (value)
   "
@@ -166,13 +168,15 @@
     ...
     \"
   "
- (with-emitter-to-string
+  ; If I don't use absolute paths on these macros, this function doesn't work
+  ; in other packages :( Oh, well.
+ (yaml.emitter:with-emitter-to-string
   (em)
-  (emit-stream
+  (yaml.emitter:emit-stream
    (em)
-   (emit-document
+   (yaml.emitter:emit-document
     (em)
-    (emit-object em value)))))
+    (yaml.emitter:emit-object em value)))))
 
 
 ;;; Wrappers around cl-libyaml event interface with defaults and keyword args
