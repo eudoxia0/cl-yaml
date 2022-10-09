@@ -113,35 +113,7 @@
   (with-output-to-string (stream)
 (emit value stream)))
 
-(defun emit-pretty-as-document (em value)
-  "
-  Emit a value using \"pretty printing\" settings
-  within the context of its own document.
 
-  Example:
-
-  (with-emitter-to-string (em)
-    (emit-pretty-as-document
-      em
-      (alexandria:plist-hash-table '(\"a\" t \"b\" 2.0 \"moreducks\" (c d e f)))
-      stream))
-    ; =>
-    \"---
-    a: true
-    b: 2.0
-    moreducks:
-    - C
-    - D
-    - E
-    - F
-    ...
-    \"
-  "
-  (yaml.emitter:emit-stream
-   (em)
-   (yaml.emitter:emit-document
-    (em)
-    (yaml.emitter:emit-object em value))))
 
 
 ;;; Wrappers around cl-libyaml event interface with defaults and keyword args
@@ -351,3 +323,34 @@
                 (emit-object emitter key)
                 (emit-object emitter value))
                 (return)))))))
+
+(defun emit-pretty-as-document (em value)
+  "
+  Emit a value using \"pretty printing\" settings
+  within the context of its own document.
+
+  Example:
+
+  (with-emitter-to-string (em)
+    (emit-pretty-as-document
+      em
+      (alexandria:plist-hash-table '(\"a\" t \"b\" 2.0 \"moreducks\" (c d e f)))
+      stream))
+    ; =>
+    \"---
+    a: true
+    b: 2.0
+    moreducks:
+    - C
+    - D
+    - E
+    - F
+    ...
+    \"
+  "
+  (yaml.emitter:emit-stream
+   (em)
+   (yaml.emitter:emit-document
+    (em)
+    (yaml.emitter:emit-object em value))))
+
