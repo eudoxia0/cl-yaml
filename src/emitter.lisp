@@ -120,9 +120,11 @@
 
   Example:
 
+  (with-emitter-to-string (em)
     (emit-pretty-as-document
+      em
       (alexandria:plist-hash-table '(\"a\" t \"b\" 2.0 \"moreducks\" (c d e f)))
-      stream)
+      stream))
     ; =>
     \"---
     a: true
