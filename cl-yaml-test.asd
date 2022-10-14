@@ -17,6 +17,7 @@
                  (:file "parser")
                  (:file "emitter")
                  (:file "emitter2")
+                 (:file "emitter-pretty")
                  (:file "round-trip")
                  (:file "spec")
                  (:file "bench")

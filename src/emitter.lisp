@@ -44,9 +44,10 @@
            :emit-mapping
            :emit-scalar
            :emit-object
-           :print-scalar
            :with-emitter-to-stream
-           :with-emitter-to-string)
+           :with-emitter-to-string
+           :emit-pretty-as-document
+           :print-scalar)
   (:documentation "The YAML emitter."))
 (in-package :yaml.emitter)
 
@@ -111,6 +112,9 @@
   "Emit a value to string."
   (with-output-to-string (stream)
 (emit value stream)))
+
+
+
 
 ;;; Wrappers around cl-libyaml event interface with defaults and keyword args
 
@@ -302,4 +306,51 @@
 
 (defmethod emit-object (emitter (obj float))
   (emit-scalar emitter obj))
+
+(defmethod emit-object (emitter (obj cons))
+  (emit-sequence (emitter)
+    (loop for x in obj do
+        (emit-object emitter x))))
+
+(defmethod emit-object (emitter (obj hash-table))
+  (emit-mapping (emitter)
+    (with-hash-table-iterator (h-iter obj)
+    (loop
+        (multiple-value-bind (entry-p key value)
+          (h-iter)
+            (if entry-p
+                (progn
+                (emit-object emitter key)
+                (emit-object emitter value))
+                (return)))))))
+
+(defun emit-pretty-as-document (em value)
+  "
+  Emit a value using \"pretty printing\" settings
+  within the context of its own document.
+
+  Example:
+
+  (with-emitter-to-string (em)
+    (emit-pretty-as-document
+      em
+      (alexandria:plist-hash-table '(\"a\" t \"b\" 2.0 \"moreducks\" (c d e f)))
+      stream))
+    ; =>
+    \"---
+    a: true
+    b: 2.0
+    moreducks:
+    - C
+    - D
+    - E
+    - F
+    ...
+    \"
+  "
+  (yaml.emitter:emit-stream
+   (em)
+   (yaml.emitter:emit-document
+    (em)
+    (yaml.emitter:emit-object em value))))
 

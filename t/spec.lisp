@@ -2,6 +2,7 @@
 (defpackage cl-yaml-test.spec
   (:use :cl :fiveam)
   (:export :spec)
+  (:import-from :generic-comparability)
   (:documentation "Run tests from the specification."))
 (in-package :cl-yaml-test.spec)
 
