@@ -80,13 +80,11 @@
                            (eql type :document-end-event))
                        (add-to-output (list type)))
                       ;; Alias and scalar event, push the type and data pair to
-                      ;; the output list. Disabled since they are not supported.
-                      #|
+                      ;; the output list.
                       ((eql type :alias-event)
                        (add-to-output
                         (cons type
                               (libyaml.event:event-alias-data event))))
-                      |#
                       ((eql type :scalar-event)
                        (add-to-output
                         (cons type
@@ -121,12 +119,12 @@
                  (append (first contexts)
                          con))))
         ;; Alias event
-        ;; Disabled since it's not supported
-        #|
+        ;; Alias (name) is parsed as string and NOT serialized as
+        ;; alias node refering to anchor.
         ((:alias-event &key anchor)
-         (declare (ignore anchor))
-         t)
-        |#
+         (setf (first contexts)
+               (append (first contexts)
+                       (list (concatenate 'string "*" anchor)))))
         ;; Scalar
         ((:scalar-event &key anchor tag value length plain-implicit quoted-implicit style)
          (declare (ignore anchor length plain-implicit quoted-implicit))
