@@ -1,6 +1,12 @@
 (in-package :cl-user)
+
+(defpackage yaml.parser.extensions
+  (:use)
+  (:export #:*yaml-tag-converter*)
+  (:documentation "Symbols related to parser extensions"))
+
 (defpackage yaml.parser
-  (:use :cl)
+  (:use :cl :yaml.parser.extensions)
   (:import-from :alexandria
                 :destructuring-case)
   (:import-from :libyaml.macros
@@ -13,6 +19,14 @@
   (:documentation "The YAML parser."))
 (in-package :yaml.parser)
 
+(defvar *yaml-tag-converter* nil
+  "Function to call for unregistered tags.
+
+When non-nil, it should be a function accepting a TAG (string) and a
+raw yaml VALUE (string, list or hashtable). The function is called
+when no scalar, sequence or mapping converter is registered for the
+given tag and should return the value to use instead of VALUE.")
+
 (defvar +scalar-converters+ (make-hash-table :test #'equal))
 (defvar +sequence-converters+ (make-hash-table :test #'equal))
 (defvar +mapping-converters+ (make-hash-table :test #'equal))
@@ -22,27 +36,33 @@
 
 (defun convert-scalar (string tag &optional (style :plain-scalar-stype))
   (let ((converter (scalar-converter tag)))
-    (if converter
-	(funcall converter string)
-	(yaml.scalar:parse-scalar string style))))
+    (cond
+      (converter (funcall converter string))
+      ((and tag *yaml-tag-converter*)
+       (funcall *yaml-tag-converter* tag string))
+      (t (yaml.scalar:parse-scalar string style)))))
 
 (defun sequence-converter (tag)
   (gethash tag +sequence-converters+))
 
 (defun convert-sequence (list tag)
   (let ((converter (sequence-converter tag)))
-    (if converter
-	(funcall converter list)
-	list)))
+    (cond
+      (converter (funcall converter list))
+      ((and tag *yaml-tag-converter*)
+       (funcall *yaml-tag-converter* tag list))
+      (t list))))
 
 (defun mapping-converter (tag)
   (gethash tag +mapping-converters+))
 
 (defun convert-mapping (hashtable tag)
   (let ((converter (mapping-converter tag)))
-    (if converter
-	(funcall converter hashtable)
-	hashtable)))
+    (cond
+      (converter (funcall converter hashtable))
+      ((and tag *yaml-tag-converter*)
+       (funcall *yaml-tag-converter* tag hashtable))
+      (t hashtable))))
 
 ;;; The parser
 
